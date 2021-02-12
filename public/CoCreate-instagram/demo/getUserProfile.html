@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Instagram</title>
+
+    <style type="text/css">
+        .btnsubmit {
+            margin: 25px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-family: 'Cookie', cursive;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Profile - Instagram -</h1>
+    
+    <form>
+        <!--access token : <input data-facebook="getUserProfile.accessToken" value="EAAZApoNcwi0wBAL8ZA6nKoDXj9goZB3vrHnA7AxZBTzocjbThmUU2YuldSnRHbCZAZCbFgPwPNXZCKHiGZBFxIbB87xSHmKbUMG0JTXUkBtsi8UJoZAmXk7kXJ7aTlntXQYw0D60e3IZBLQ7x6FjjVqzgZCwubc0NBROp8is9Ng1hZA7ogbL5rZCkvNwtVUMObIhDiUpptkc4w0dN2NCqjJ1wiBi67nmuW0cvBB7lzMVVs05h6gZDZD">-->
+        <button class="btnsubmit"  data-actions='getUserProfile'>Instagram User data</button>
+    </form>
+
+    <div data-template_id="getUserProfile">
+        <h4>Instagram Search Users :- </h4>
+        <div data-value="{{data.id}}" >
+            <div>
+                <h1>testing success</h1>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+<script>
+    var config = {
+        apiKey: 'c2b08663-06e3-440c-ef6f-13978b42883a',
+        securityKey: 'f26baf68-e3a9-45fc-effe-502e47116265',
+        organization_Id: '5de0387b12e200ea63204d6c',
+        host: '52.203.210.252:8081'
+    }
+</script>
+
+<!--CoCreateJS-->
+<script src="https://server.cocreate.app/js/CoCreate.min.js"></script>
+
+<!--CoCreate Plugins-->
+<script src="https://server.cocreate.app/js/CoCreate-api.js"></script>
+<script src="../src/CoCreate-instagram.js"></script>
+
+
+</html>

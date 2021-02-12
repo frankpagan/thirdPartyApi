@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Twitter</title>
+
+    <style type="text/css">
+        .template {
+            display: none
+        }
+        .btnsubmit {
+            margin: 25px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-family: 'Cookie', cursive;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Twitter Search Users :- </h1>
+    
+    <form>
+        consumer_key: <input data-twitter="getSearchUser.consumer_key" value="hOugAN32rGsFldgxqYyJIJDTH">
+        consumer_secret: <input data-twitter="getSearchUser.consumer_secret" value="OSoVFrQxSk25OioMQZt77X7JOp95RE3HEVYh8pmnGpCgOa1rW1">
+        access_token : <input data-twitter="getSearchUser.access_token" value="1314075796005253120-KG0SdKvc0eJw3efeTy3cl9fP3zpOdq">
+        access_token_secret : <input data-twitter="getSearchUser.access_token_secret" value="lKJVhPEK4uNKq4lDXPr3bklGmlHEFyAbGI2qFOisTIzRw">
+        <br/> <br/><br/>
+         
+        Search Query: <input data-twitter="getSearchUser.query" value="twitterdev">
+        <br/>
+        <button class="btnsubmit"  data-actions='getSearchUser'>Twitter Search Users</button>
+    </form>
+
+    <div data-template_id="getSearchUser">
+        <h4>Twitter Search Users :- </h4>
+        <div class="template margin:10px " data-value="{{data.id}}" data-render_array="data">
+            <div style="display:flex ; align-items:center; width:100% ;flex-wrap:wrap ">
+                <img class="margin-right:10px" src="{{data.profile_image_url_https}}" />
+                <h3 class="margin-right:10px" value="{{data.name}}">name></h3>
+            </div>
+            <hr/>
+        </div>
+    </div>
+
+</body>
+
+
+<script>
+    var config = {
+        apiKey: 'c2b08663-06e3-440c-ef6f-13978b42883a',
+        securityKey: 'f26baf68-e3a9-45fc-effe-502e47116265',
+        organization_Id: '5de0387b12e200ea63204d6c',
+        host: '52.203.210.252:8081'
+    }
+</script>
+
+<!--CoCreateJS-->
+<script src="https://server.cocreate.app/js/CoCreate.min.js"></script>
+
+<!--CoCreate Plugins-->
+<script src="https://server.cocreate.app/js/CoCreate-api.js"></script>
+<script src="../src/CoCreate-twitter.js"></script>
+
+
+</html>

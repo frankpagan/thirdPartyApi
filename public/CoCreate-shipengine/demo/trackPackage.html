@@ -1,0 +1,70 @@
+ <!DOCTYPE html>
+<html>
+<head>
+    <title>ShipEngine</title>
+
+    <style type="text/css">
+      .template{display:none}
+      .item{
+          font-weight: bold;
+          margin-top:10px;
+          font-size:20px;
+      }
+      .subitem{
+          font-size:15px;
+          font-weight: bold;
+          margin-top: 5px;
+      }
+      label{
+          display:inline-block;
+          width:120px;
+      }
+      button{
+          margin:10px;
+      }
+      
+    </style>
+
+</head>
+<body>
+    
+<h1>Track Package</h1>
+<div class="container-div">
+    <form>
+        <label>Label ID</label><input data-shipengine="trackPackage.labelId" value="se-22334381">
+        <button data-actions='trackPackage'>Track Package</button>
+    </form>
+   <div data-template_id="trackPackage">
+        <div class="template card card margin:10px " 
+            data-value="{{data}}" 
+            data-template_id="trackPackage"
+            data-render-array="data">
+        	<label>tracking_number</label><input value="{{data.tracking_number}}"></br>
+        	<label>status_description</label><input value="{{data.status_description}}"></br>
+        	<label>status_code</label><input value="{{data.status_code}}"></br>
+        	<label>carrier_status_description</label><input value="{{data.carrier_status_description}}"></br>
+        </div>
+    </div>
+</div>
+
+
+<script>
+var config = {
+      apiKey: 'c2b08663-06e3-440c-ef6f-13978b42883a',
+      securityKey: 'f26baf68-e3a9-45fc-effe-502e47116265',
+      organization_Id: '5de0387b12e200ea63204d6c',
+      host: '52.203.210.252:8081'
+}
+
+</script>
+
+<!--CoCreateJS-->
+<script src="https://server.cocreate.app/js/CoCreate.min.js"></script>
+
+<!--CoCreate Plugins-->
+<script src="https://server.cocreate.app/js/CoCreate-api.js"></script>
+<script src="../src/CoCreate-shipengine.js"></script>
+
+</body>
+
+</html>

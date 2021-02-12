@@ -1,0 +1,12 @@
+{
+    "": {
+        "apigateway": {
+            "path": "",
+            "method": {
+                "value": "",
+                "items": []
+            },
+            "body": {}
+        }
+    }
+}
