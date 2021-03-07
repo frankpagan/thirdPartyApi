@@ -82,7 +82,7 @@ jobs:
       - package
     if: needs.ci.outputs.new_release_published == 'true'
     env:
-      VERSION: ${{ needs.ci.outputs.outputs.new_release_version }}
+      VERSION: ${{ needs.ci.outputs.new_release_version }}
       KUBECONFIG_FILE: ${{ secrets.KUBECONFIG }}
       KUBECONFIG: kubeconfig
     steps:
@@ -105,4 +105,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB }}
         run: |
           sed -i "s/IMAGE_TAG/${VERSION}/g" k8s/kustomization.yaml
-          ./kubectl kustomize k8s/ | ./kubectl apply -f
+          ./kubectl kustomize k8s/ | ./kubectl apply -f -
