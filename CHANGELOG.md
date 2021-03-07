@@ -4,6 +4,15 @@
 ### Bug Fixes
 
 * **automation:** make automated workflow ([e692027](https://github.com/CoCreate-app/CoCreateApi/commit/e692027d41022676015b26d6300cdfa4d30873c6))
+* **automation:** remove duplicated workflow ([c8e7fa6](https://github.com/CoCreate-app/CoCreateApi/commit/c8e7fa67dbe713001a24f3186cffb4f6ad291447))
+* **automation:** remove manifest ([dcab4e3](https://github.com/CoCreate-app/CoCreateApi/commit/dcab4e37ab0de5224670e726b32d9ad8ffac986b))
+
+## [1.0.2](https://github.com/CoCreate-app/CoCreateApi/compare/v1.0.1...v1.0.2) (2021-03-07)
+
+
+### Bug Fixes
+
+* **automation:** make automated workflow ([e692027](https://github.com/CoCreate-app/CoCreateApi/commit/e692027d41022676015b26d6300cdfa4d30873c6))
 * **automation:** remove manifest ([dcab4e3](https://github.com/CoCreate-app/CoCreateApi/commit/dcab4e37ab0de5224670e726b32d9ad8ffac986b))
 
 ## [1.0.2](https://github.com/CoCreate-app/CoCreateApi/compare/v1.0.1...v1.0.2) (2021-03-07)
