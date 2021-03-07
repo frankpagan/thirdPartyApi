@@ -5,14 +5,22 @@ const { createServer } = require('http');
 const init = require("./init")
 const WSManager = require("./core/WSManager");
 const urlencoded = require('body-parser').urlencoded;
-
-const app = express();
-
-const port = process.env.PORT || 8082;
-app.use(urlencoded({ extended: false }));
 const wsManager = new WSManager('api');
 
-app.use('/twilio', require('./plugins/twilio/routes'));
+const app = express();
+const port = process.env.PORT || 8082;
+
+app.use(urlencoded({ extended: false }));
+app.use(express.static('public'));
+
+app.get('/api_/hello', (req, res) => {
+  console.log('connected')
+  res.send('Hello World');
+})
+
+app.use('/api_/twilio', require('./plugins/twilio/routes'));
+
+
 
 init.WSManager(wsManager);
 
@@ -24,4 +32,6 @@ server.on('upgrade', function upgrade(request, socket, head) {
   }
 });
 
-server.listen(port);
+server.listen(port, () => {
+  console.log('Example app listening at http://localhost:${port}')
+});

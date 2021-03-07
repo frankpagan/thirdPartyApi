@@ -2,7 +2,7 @@
 const utils = require('../utils');
 
 
-class CoCreateDataInstagram {
+class CoCreateInstagram {
 	constructor(wsManager) {
 		this.wsManager = wsManager;
 		this.module_id = "instagram";
@@ -55,4 +55,4 @@ class CoCreateDataInstagram {
 	}
 }//end Class 
 
-module.exports = CoCreateDataInstagram;
+module.exports = CoCreateInstagram;

@@ -56,6 +56,8 @@ class CoCreateXXX {
 			utils.send_response(self.wsManager, socket, {"type":type,"response":data}, self.module_id)
 			ServerCrud.SocketDestory(socket_config);
 		});
+		
+		
 	}
 	
 }//end Class 

@@ -38,7 +38,7 @@
   "dependencies": {
     "@cocreate/docs": "^1.0.3",
     "@cocreate/server-crud": "^1.0.0",
-    "@sendgrid/mail": "^7.3.0",
+    "@sendgrid/mail": "^7.4.2",
     "axios": "^0.21.1",
     "csvtojson": "^2.0.10",
     "express": "^4.17.1",
@@ -49,15 +49,15 @@
     "json-2-csv": "^3.7.6",
     "lighthouse": "^7.2.0",
     "mongodb": "^3.6.4",
-    "open": "^8.0.1",
+    "open": "^8.0.2",
     "passport": "^0.4.1",
     "puppeteer": "^8.0.0",
-    "querystring": "^0.2.0",
+    "querystring": "^0.2.1",
     "server-destroy": "^1.0.1",
-    "stripe": "^8.96.0",
+    "stripe": "^8.137.0",
     "twilio": "^3.57.0",
     "twit": "^2.2.11",
-    "uuid": "^8.1.0",
-    "ws": "^7.3.0"
+    "uuid": "^8.3.2",
+    "ws": "^7.4.3"
   }
 }

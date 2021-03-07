@@ -3,14 +3,21 @@ var path = require('path');
 var router = express.Router();
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const ClientCapability = require('twilio').jwt.ClientCapability;
-const url_twilio = 'https://server.cocreate.app:3000/twilio';
+const url_twilio = 'https://server.cocreate.app:8088/api_/twilio';
 var utils = require("../../utils/utils.js");
 //const CoCreateCRUD = require("../../core/CoCreate-CRUD.js")
 let collection_name = "testtwillio";
 
 router.get('/token/:clientName?', async (req, res) => {
+
+  //. Added by Jin
+  console.log('call /api/twilio/token/:clientName');
+
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  
+
+  
   try{
     const clientName = (typeof(req.params.clientName) != undefined) ? req.params.clientName : '--'; //before joey
     var bd = 'masterDB';
@@ -28,9 +35,16 @@ router.get('/token/:clientName?', async (req, res) => {
         org = 0;
       }
       console.log("ORG ",org)
+   
+   /*
     const accountSid =org.twilioAccountId;
     const authToken = org.twilioAuthToken;
     const appSid = org.twilioAppSid;
+    */
+    const accountSid ='ACa677caf4788f8e1ae9451097da1712d0';
+    const authToken = '445c7f892e5c8f98c66a5947c37645fa';
+    const appSid = 'AP7a56503ca9d88d260cd79073ccc177b1';
+    
     
     const capability = new ClientCapability({
       accountSid: accountSid,

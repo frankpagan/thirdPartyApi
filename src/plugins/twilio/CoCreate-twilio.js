@@ -1,19 +1,28 @@
 'use strict'
 var utils= require('../utils');
-var utils_c = require("../../controllers/utils.js");
-const CoCreateBase = require("../../core/CoCreateBase");
+// var utils_c = require("../../controllers/utils.js");
+// const CoCreateBase = require("../../core/CoCreateBase");
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 let collection_name = "testtwillio";
 
-class CoCreateTwilio extends CoCreateBase {
-	constructor(wsManager, db) {
-		super(wsManager, db);
+// class CoCreateTwilio extends CoCreateBase {
+// 	constructor(wsManager, db) {
+// 		super(wsManager, db);
+// 		this.init();
+// 	}
+
+class CoCreateTwilio {
+	constructor(wsManager) {
+		this.module_id = 'twilio';
+		this.wsManager = wsManager;
 		this.init();
+		
 	}
+
 
 	init() {
 		if (this.wsManager) {
-			this.wsManager.on('twilio',		(socket, data, roomInfo) => this.sendTwilio(socket, data, roomInfo));
+			this.wsManager.on(this.module_id,		(socket, data, roomInfo) => this.sendTwilio(socket, data, roomInfo));
 		}
 	}
 	

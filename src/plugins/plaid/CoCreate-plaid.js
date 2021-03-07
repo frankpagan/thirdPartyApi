@@ -1,7 +1,7 @@
 'use strict'
 const utils = require('../utils');
 
-class CoCreateDataPlaid {
+class CoCreatePlaid {
     constructor(wsManager) {
         this.wsManager = wsManager;
         this.module_id = 'plaid';
@@ -105,4 +105,4 @@ class CoCreateDataPlaid {
     }
 }
 
-module.exports = CoCreateDataPlaid;
+module.exports = CoCreatePlaid;

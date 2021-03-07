@@ -3,7 +3,7 @@ const utils = require('../utils');
 const request = require('request');
 const API_KEY = "TEST_QpHdYyPmniSoWSH9AdiJslPAHzo5wkhU4q4EjWwSF0k";
 
-class CoCreateDataShipengine {
+class CoCreateShipengine {
     constructor(wsManager) {
         this.module_id = 'shipengine';
         this.wsManager = wsManager;
@@ -227,4 +227,4 @@ class CoCreateDataShipengine {
     }
 
 }
-module.exports = CoCreateDataShipengine;
+module.exports = CoCreateShipengine;
