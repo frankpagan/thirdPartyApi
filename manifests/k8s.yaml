@@ -74,3 +74,4 @@ spec:
   - hosts:
     - '*.cocreate.app'
     secretName: cocreate-app
+
