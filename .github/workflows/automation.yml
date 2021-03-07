@@ -56,7 +56,7 @@ jobs:
     if: needs.ci.outputs.new_release_published == 'true'
     env:
       IMAGE: docker.pkg.github.com/cocreate-app/cocreateapi/cocreateapi
-      VERSION: ${{ needs.ci.outputs.outputs.new_release_version }}
+      VERSION: ${{ needs.ci.outputs.new_release_version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v1
@@ -68,7 +68,7 @@ jobs:
           docker login docker.pkg.github.com -u ${GITHUB_ACTOR} -p ${GITHUB_TOKEN}
 
       - name: Build docker image
-        run: docker build . -t ${IMAGE}:latest -t ${IMAGE}:$VERSION
+        run: docker build . -t ${IMAGE}:latest -t ${IMAGE}:${VERSION}
 
       - name: Push docker image
         run: |
