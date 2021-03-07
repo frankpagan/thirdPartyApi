@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/CoCreate-app/CoCreateApi/compare/v1.0.1...v1.0.2) (2021-03-07)
+
+
+### Bug Fixes
+
+* **automation:** make automated workflow ([e692027](https://github.com/CoCreate-app/CoCreateApi/commit/e692027d41022676015b26d6300cdfa4d30873c6))
+
 ## [1.0.1](https://github.com/CoCreate-app/CoCreateApi/compare/v1.0.0...v1.0.1) (2021-03-07)
 
 
