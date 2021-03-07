@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.1...v1.1.2) (2021-03-07)
+
+
+### Bug Fixes
+
+* **automation:** handle newly released version number ([a91002f](https://github.com/CoCreate-app/CoCreateApi/commit/a91002fbb1a04dbc595da246a46b2018be81ee86))
+
 ## [1.1.1](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.0...v1.1.1) (2021-03-07)
 
 
