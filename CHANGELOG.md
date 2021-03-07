@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/CoCreate-app/CoCreateApi/compare/v1.0.2...v1.1.0) (2021-03-07)
+
+
+### Features
+
+* **automation:** trigger workflow ([e44a52a](https://github.com/CoCreate-app/CoCreateApi/commit/e44a52ae8735941d4613b1aae62a7d9df1d8c8d1))
+
 ## [1.0.2](https://github.com/CoCreate-app/CoCreateApi/compare/v1.0.1...v1.0.2) (2021-03-07)
 
 
