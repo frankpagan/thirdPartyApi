@@ -50,7 +50,7 @@ git config --global user.email "contributor@example.com"
 ```
 
 We use [semantic-release](https://github.com/semantic-release/semantic-release) as process to generate changelog
-and to release. Write meaningful commits according to 
+and to release. Write meaningful commits according to
 [Commit Message Formats](https://github.com/semantic-release/semantic-release#commit-message-format) is important.
 
 ```
@@ -65,7 +65,6 @@ Here is an example of the release type that should be done based on a [semantic-
 | `fix(pencil): stop graphite breaking when too much pressure applied`                                                                                                                             | Patch Release              |
 | `feat(pencil): add 'graphiteWidth' option`                                                                                                                                                       | ~~Minor~~ Feature Release  |
 | `perf(pencil): remove graphiteWidth option`<br><br>`BREAKING CHANGE: The graphiteWidth option has been removed.`<br>`The default graphite width of 10mm is always used for performance reasons.` | ~~Major~~ Breaking Release |
-
 
 ## Push
 
