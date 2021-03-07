@@ -1,0 +1,33 @@
+name: kubernetes
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - manifests/k8s.yaml
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      KUBECONFIG: /home/runner/.kube/config
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v1
+
+    - name: Get kubectl
+      run: |
+        curl -LO https://dl.k8s.io/release/v1.20.0/bin/linux/amd64/kubectl
+        chmod +x kubectl
+        mkdir -p /home/runner/.kube
+
+    - name: Save kubeconfig
+      env:
+        KUBECONFIG_FILE: ${{ secrets.KUBECONFIG }}
+      run: |
+        echo ${KUBECONFIG_FILE} | base64 -d  > ${KUBECONFIG}
+
+    - name: Run kubectl
+      run: |
+        ./kubectl apply -f manifests/k8s.yaml

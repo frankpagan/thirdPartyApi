@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  about:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+          
+      - name: Jaid/action-sync-node-meta
+        uses: jaid/action-sync-node-meta@v1.4.0
+        with:
+          direction: overwrite-github # default is overwrite-file
+          githubToken: ${{ secrets.GITHUB }}
+  
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v2
+        with:
+          # You can specify specifying version range for the extra plugins if you prefer.
+          extra_plugins: |
+            @semantic-release/changelog
+            @semantic-release/npm
+            @semantic-release/git
+            @semantic-release/github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }} 
+          
+  package:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: docker.pkg.github.com/cocreate-app/cocreateapi/cocreateapi
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v1
+    - name: Login docker registry
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        docker login docker.pkg.github.com -u $GITHUB_ACTOR -p $GITHUB_TOKEN
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+    - name: Build docker image
+      run: docker build . -t $IMAGE:latest -t $IMAGE:${GITHUB_REF:10}
+    - name: Push docker image
+      run: |
+        docker push $IMAGE:latest
+        docker push $IMAGE:${GITHUB_REF:10}
+    - name: Get kubectl
+      run: |
+        curl -LO https://dl.k8s.io/release/v1.20.0/bin/linux/amd64/kubectl
+        chmod +x kubectl
+    - name: Generate deployment
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB }}
+      run: |
+        sed -i "s/IMAGE_TAG/${GITHUB_REF:10}/g" k8s/kustomization.yaml
+        ./kubectl kustomize k8s/ > manifests/temp.yaml
+        git stash
+        git checkout master
+        mv manifests/temp.yaml manifests/k8s.yaml
+        git add manifests/k8s.yaml
+        git commit -m "update manifest file"
+        git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/CoCreate-app/CoCreateAPI.git" master -f
+      
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      KUBECONFIG: /home/runner/.kube/config
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v1
+
+    - name: Get kubectl
+      run: |
+        curl -LO https://dl.k8s.io/release/v1.20.0/bin/linux/amd64/kubectl
+        chmod +x kubectl
+        mkdir -p /home/runner/.kube
+
+    - name: Save kubeconfig
+      env:
+        KUBECONFIG_FILE: ${{ secrets.KUBECONFIG }}
+      run: |
+        echo ${KUBECONFIG_FILE} | base64 -d  > ${KUBECONFIG}
+
+    - name: Run kubectl
+      run: |
+        ./kubectl apply -f manifests/k8s.yaml
+  
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: update documentation
+        uses: CoCreate-app/CoCreate-docs@master

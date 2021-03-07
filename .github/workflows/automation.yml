@@ -4,12 +4,6 @@ on:
   push:
     branches:
     - master
-  pull_request:
-    branches:
-    - master
-  create:
-    branches:
-    - master
 
 jobs:
   updateKeyword:
@@ -52,3 +46,4 @@ jobs:
       - name: update documentation
         uses: CoCreate-app/CoCreate-docs@master
           
+  
