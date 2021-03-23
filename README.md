@@ -43,7 +43,6 @@ Please Email the Developer Experience Team [here](mailto:develop@cocreate.app) i
 
 CoCreate-CoCreateApi is maintained and funded by CoCreate. The names and logos for CoCreate are trademarks of CoCreate, LLC.
 
-<a name="contribute"></a>
 # How to Contribute
 
 We encourage contribution to our libraries (you might even score some nifty swag), please see our [CONTRIBUTING](https://github.com/CoCreate-app/CoCreate-CoCreateApi/blob/master/CONTRIBUTING.md) guide for details.
