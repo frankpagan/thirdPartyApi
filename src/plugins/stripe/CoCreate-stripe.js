@@ -1,6 +1,7 @@
 /* global Y */
 'use strict'
 var utils= require('../utils');
+var ServerCrud = require("@cocreate/server-crud/src/index.js");
 /*const CoCreateBase = require("../../core/CoCreateBase");
 
 class CoCreateStripe extends CoCreateBase {
@@ -21,13 +22,14 @@ class CoCreateStripe {
 	init() {
 		if (this.wsManager) {
 		//	this.wsManager.on('stripe',		(socket, data) => this.sendStripe(socket, data));
-		this.wsManager.on('stripe',		(socket, data, roomInfo) => this.sendTwilio(socket, data, roomInfo));
+		this.wsManager.on('stripe',		(socket, data, roomInfo) => this.sendStripe(socket, data, roomInfo));
 		}
 	}
 	async sendStripe(socket, data,roomInfo) {
 	    let that = this;
 	    let send_response ='stripe';
 	    let data_original = {...data};
+	    const params = data['data'];
 	    console.log("Stripe ",data_original);
         let type = data['type'];
         delete data['type'];
@@ -36,30 +38,44 @@ class CoCreateStripe {
         let targets = [];
         let tags = [];
         let key_stripe = 'sk_test_4eC39HqLyjWDarjtT1zdp7dc'
-        console.log("type ",type)
-        //const stripe = require('stripe')(key_stripe);    //// platform key
-       // let charges =await stripe.charges.retrieve('ch_1HTyOl2eZvKYlo2CezyK5RPj');
-        //const 
-  
-        const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
- 
-        ///key dinamic
-        // 1 step Query to master Db
-        // 2 step config socket
-        // query collection org to get key
-        /*
+       
         const socket_config = {
-		    "config": {
-		        "apiKey": "c2b08663-06e3-440c-ef6f-13978b42883a",
-		        "securityKey": "f26baf68-e3a9-45fc-effe-502e47116265",
-		        "organization_Id": "5de0387b12e200ea63204d6c",
-		    },
-		    "prefix": "ws",
-		    "host": "server.cocreate.app:8088"
-		}
-		ServerCrud.SocketInit(socket_config)
+    	    "config": {
+    	        "apiKey": params["apiKey"],
+    	        "securityKey": params["securityKey"],
+    	        "organization_Id": params["organization_id"],
+    	    },
+    	    "prefix": "ws",
+    	    "host": "server.cocreate.app:8088"
+    	}
+    	
+    	var crudSocket = await ServerCrud.SocketInitAsync(socket_config);
+    	var org_row = await ServerCrud.ReadDocumentAsync(crudSocket,{
+    		collection: "organizations",
+    		document_id: params["organization_id"]
+    	}, socket_config.config);
+    	let org_data;
+    	let apiKeysOrg;
+    	try{
+    		org_data = org_row["data"]["data"];
+    		apiKeysOrg =org_data["apis"]["stripe"];
+    	  }catch(e){
+    		console.log(this.module_id+": Error GET ORG",e);
+    		return false;
+    	  }
+    	 // connect api
+    	 let stripe = false;
+    	 try{
+    	     let enviroment = 'prod'; //'test'
+            //let enviroment = 'test'
+            let key  = apiKeysOrg[enviroment]
+            stripe = require('stripe')(key);
+    	 }catch(e){
+    	   	console.log(this.module_id+" : Error Connect to api",e)
+    	   	return false;
+    	 }
   
-          */
+          
         /*Address*/
         
         switch (type) {
@@ -89,7 +105,6 @@ class CoCreateStripe {
                 const balanceTransaction = await stripe.balanceTransactions.retrieve(
                   'txn_1032HU2eZvKYlo2CEPtcnUvl'
                 );
-                console.log(" REspuesta ",balanceTransaction)
                 utils.send_response(this.wsManager, socket, { "type": data_original["type"], "response": balanceTransaction }, this.module_id)
             break;
             case 'createCustomer':

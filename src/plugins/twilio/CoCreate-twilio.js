@@ -3,6 +3,20 @@ var utils= require('../utils');
 // var utils_c = require("../../controllers/utils.js");
 // const CoCreateBase = require("../../core/CoCreateBase");
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
+var ServerCrud = require("@cocreate/server-crud/src/index.js");
+
+// ServerCrud.createDocument()
+// ServerCrud.readDocument()
+
+
+// var CoCreate = require("@cocreate/server-crud/src/index.js");
+// CoCreate.createDocument()
+// CoCreate.readDocument()
+
+
+
+
+
 let collection_name = "testtwillio";
 
 // class CoCreateTwilio extends CoCreateBase {
@@ -27,12 +41,47 @@ class CoCreateTwilio {
 	}
 	
 	async sendTwilio(socket, data, roomInfo) {
-		let data_original = {...data};
+		console.log("GEt data action twilio ",data)
+		let data_original = {...data["data"]};
 		let that = this;
 		let send_response ='twilio';
 		let type = data['type'];
 		const twiml = new VoiceResponse();
+		const params = data['data'];
 		
+		/*const params = data['data'];
+        const socket_config = {
+		    "config": {
+		        "apiKey": params["apiKey"],
+		        "securityKey": params["securityKey"],
+		        "organization_Id": params["organization_id"],
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		ServerCrud.SocketInit(socket_config)
+		
+		// await fg = ServerCrud.ReadDocument({
+		ServerCrud.ReadDocument({
+			collection: "organizations",
+			document_id: params["organization_id"]
+		}, socket_config.config);
+		
+		ServerCrud.listen('readDocument', function(data) {
+			console.log("module_id",module_id)
+			try{
+			  console.log("------ readDocument ",data)
+		  	console.log("------ aPIKEY ",data["data"]["apis"][module_id])
+		  
+			}
+			 catch(e){
+			  console.log(" --- Error ",e)
+			}
+			//ServerCrud.SocketDestory(socket_config);
+		});
+        */
+        
+		/*
 		let url_twilio = data_original.data.url ? data_original.data.url : 'https://server.cocreate.app:8088/twilio/actions_twiml';
 		let org = 0;
 		var bd = 'masterDB'
@@ -45,6 +94,45 @@ class CoCreateTwilio {
 			org = 0;
 			console.log("Error conference GET ORG",e)
 		  }  
+		  
+		  */
+		  
+		let url_twilio = data_original.data.url ? data_original.data.url : 'https://server.cocreate.app:8088/api_/twilio/actions_twiml';		 
+		 const socket_config = {
+		    "config": {
+		        "apiKey": params["apiKey"],
+		        "securityKey": params["securityKey"],
+		        "organization_Id": params["organization_id"],
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		
+		var crudSocket = await ServerCrud.SocketInitAsync(socket_config);
+		
+		var org_twilioKey = await ServerCrud.ReadDocumentAsync(crudSocket,{
+			collection: "organizations",
+			document_id: params["organization_id"]
+		}, socket_config.config);
+		let org =0;
+		var client;
+		let org_data;
+		org_data = org_twilioKey["data"]["data"]
+		console.log("org_data",org_data)
+		console.log(org_data['apis.twilio.twilioAuthToken'])
+		try{
+			const accountId =org_data['apis.twilio.twilioAccountId'];//org_data["apis"]["twilio"]["twilioAccountId"];
+    		const authToken = org_data['apis.twilio.twilioAuthToken'];
+    		console.log("accountId, authToken",accountId, authToken)
+			client = require('twilio')(accountId, authToken);
+			console.log("accountId-----, authToken",accountId, authToken)
+		  }catch(e){
+			org = 0;
+			console.log("Error connect twilio",e)
+		  }  
+	
+		console.log("type",type)
+		
 		switch (type) {
 			case 'callRecordingCreate':
 				client.calls(data_original.data.CallSid)
@@ -147,19 +235,22 @@ class CoCreateTwilio {
 				utils.send_response(that.wsManager, socket, {"type":type,"response":data_original.data}, send_response);
 			break;
 			case 'dialConference':
+				console.log("CreateConference ",data_original)
 				try{
 					data_original["create_conference"] = false;
-					let CallSid = data_original.data.CallSid;
+					let CallSid = data_original.data.CallSid
+					console.log("CallSid",CallSid)
 					if(!CallSid){
 						throw "NoExisteCallSid";
 					}
 					if(CallSid != undefined){
+						console.log("Create Conference ",CallSid)
 						client.calls(CallSid)
 						.fetch()
 						.then(async call => {
 							let response = twiml.dial();
 							let waitUrl = data_original.data.holdUrl ? data_original.data.holdUrl : url_twilio +'?opt=holdmusic' ; 
-							const url_twilio_root = 'https://server.cocreate.app:8088/twilio';
+							const url_twilio_root = 'https://server.cocreate.app:8088/api_/twilio';
 							response.conference({
 									waitUrl: waitUrl,
 									waitMethod : 'GET',

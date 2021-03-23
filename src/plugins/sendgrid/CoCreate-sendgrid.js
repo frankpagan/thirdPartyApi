@@ -2,8 +2,7 @@
 const utils = require('../utils');
 const axios = require("axios").default;
 const sgMail = require('@sendgrid/mail');
-const connection = require('../../config/dbConnection.js');
-var ObjectID = require('mongodb').ObjectID;
+
 var ServerCrud = require("@cocreate/server-crud/src/index.js");
 
 const apiKey = 'Bearer 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';
@@ -34,14 +33,12 @@ class CoCreateSendGrid {
     const params = data['data'];
     const module_id = this.module_id;
     
-    const org_id = roomInfo["key"];
-    let org = await this._getKeysbyOrg(org_id);
     
     const socket_config = {
 		    "config": {
-		        "apiKey": org["apiKey"],
-		        "securityKey": org["securityKey"],
-		        "organization_Id": org._id,
+		        "apiKey": params["apiKey"],
+		        "securityKey": params["securityKey"],
+		        "organization_Id": params["organization_id"],
 		    },
 		    "prefix": "ws",
 		    "host": "server.cocreate.app:8088"
@@ -51,7 +48,7 @@ class CoCreateSendGrid {
 		// await fg = ServerCrud.ReadDocument({
 		ServerCrud.ReadDocument({
 			collection: "organizations",
-			document_id: org._id
+			document_id: params["organization_id"]
 		}, socket_config.config);
 		
 		ServerCrud.listen('readDocument', function(data) {
@@ -395,25 +392,7 @@ class CoCreateSendGrid {
     };
     utils.send_response(this.wsManager, socket, { type, response }, this.module_id);
   }
-  
-  async _getKeysbyOrg(key_api) {
-        //key_api = "/api/5de0387b12e200ea63204d6c"
-        let org_id = key_api.split('/')[key_api.split('/').length-1];
-        try {
-            const db = await connection('masterDB'); // obtenemos la conexión  
-            const collection = db.collection('organizations');
-            var query = {
-              "_id": new ObjectID(org_id)
-            };
-            return await collection.findOne(query);
-        }
-        catch(e){
-          console.log(" Catch Error finOne --- data Organization in "+this.module_id,e)
-          return null;
-        }
-    }
-      
-  
+ 
 }
 
 module.exports = CoCreateSendGrid;

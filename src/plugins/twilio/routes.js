@@ -5,52 +5,100 @@ const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const ClientCapability = require('twilio').jwt.ClientCapability;
 const url_twilio = 'https://server.cocreate.app:8088/api_/twilio';
 var utils = require("../../utils/utils.js");
+var config = require("../../config/config.json");
 //const CoCreateCRUD = require("../../core/CoCreate-CRUD.js")
-let collection_name = "testtwillio";
+var ServerCrud = require("@cocreate/server-crud/src/index.js");
+let collection_name = "testtwilio";
+
+ var getOrgByHostname = async(hostname)=>{
+    //1er paso
+    var socket_config = {
+		    "config": {
+		        "apiKey": config["masterDB"]["apiKey"],
+		        "securityKey": config["masterDB"]["securityKey"],
+		        "organization_Id": config["masterDB"]["_id"],
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		//query to get Org from MasterDB
+		var crudSocket = await ServerCrud.SocketInitAsync(socket_config);
+	
+				
+		var getOrg = await ServerCrud.ReadDocumentListAsync(crudSocket,{
+			collection: "organizations",
+      operator: {
+				filters: [{
+					name: 'domains',
+					operator: "$in",
+					value: [hostname]
+				}]
+      }
+		}, socket_config.config);
+		
+		//delete coneccion to master or not ?
+		if(!getOrg){
+		  return null
+		}
+		//2do paso create conexion con la Org que cumpla las condiciones del dominio
+		var org = getOrg["data"]['data'][0]
+	  var socket_config = {
+		    "config": {
+		        "apiKey": org["apiKey"],
+		        "securityKey": org["securityKey"],
+		        "organization_Id": org["_id"].toString(),
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		//other connection
+		var crudSocketAsync = await ServerCrud.SocketInitAsync(socket_config);
+		var getOrg = await ServerCrud.ReadDocumentListAsync(crudSocketAsync,{
+			collection: "organizations",
+      operator: {
+				filters: [{
+					name: '_id',
+					operator: "$eq",
+					value: [org["_id"].toString()]
+				}]
+      }
+		}, socket_config.config);
+		var result = {
+		    'row':getOrg["data"]['data'][0],
+		    'crudSocketAsync':crudSocketAsync,
+		    'socket_config':socket_config
+		}
+		return result;
+}
 
 router.get('/token/:clientName?', async (req, res) => {
-
   //. Added by Jin
   console.log('call /api/twilio/token/:clientName');
 
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   
-
-  
   try{
-    const clientName = (typeof(req.params.clientName) != undefined) ? req.params.clientName : '--'; //before joey
-    var bd = 'masterDB';
-    var org;
-    var user;
-    try{
-      var user = await utils.getDocument({'collection':'users','document_id':clientName},bd);
-    }catch(e){
-      user = 0;
-    }
-    if(user != 0)
-      try{
-        var org = await utils.getDocument({'collection':'organizations','document_id':user.organization_id},bd);
-      }catch(e){
-        org = 0;
-      }
-      console.log("ORG ",org)
+    const clientName = (typeof(req.params.clientName) != undefined) ? req.params.clientName : '--';
+    let result = await getOrgByHostname(req.hostname);
+    let org = result['row']
+    console.log(org["apis"]["twilio"])
+	
+		const accountSid =org["apis"]["twilio"]["twilioAccountId"];
+    const authToken = org["apis"]["twilio"]["twilioAuthToken"];
+    const appSid = org["apis"]["twilio"]["twilioAccountSid"];
    
-   /*
-    const accountSid =org.twilioAccountId;
-    const authToken = org.twilioAuthToken;
-    const appSid = org.twilioAppSid;
-    */
-    const accountSid ='ACa677caf4788f8e1ae9451097da1712d0';
+
+   /* 
+     const accountSid ='ACa677caf4788f8e1ae9451097da1712d0';
     const authToken = '445c7f892e5c8f98c66a5947c37645fa';
     const appSid = 'AP7a56503ca9d88d260cd79073ccc177b1';
-    
-    
+    */
     const capability = new ClientCapability({
       accountSid: accountSid,
       authToken: authToken,
     });
-  
+    
     capability.addScope(
       new ClientCapability.OutgoingClientScope({ applicationSid: appSid })
     );
@@ -63,6 +111,7 @@ router.get('/token/:clientName?', async (req, res) => {
     });
     
   }catch(e){
+    console.log(e)
     res.json({
      token: 'NoToken'
     });
@@ -104,45 +153,105 @@ router.post('/voice', async (req, res) => {
   res.send(twiml.toString());
 });
 
-const socket = {
-                  "config": {
-                    "apiKey": "c2b08663-06e3-440c-ef6f-13978b42883a",
-                  	"securityKey": "f26baf68-e3a9-45fc-effe-502e47116265",
-                  	"organization_Id": "5de0387b12e200ea63204d6c"
-                  },
-                  "host": "server.cocreate.app:8088"
-              }
-/*
-CoCreateCRUD.CoCreateSocketInit(socket)
-CoCreateCRUD.listen('readDocumentList', function(data) {
-  console.log(data);
-})
-*/  
+
 router.post('/calls_events_conference', async (req, res)=>{
-  const connection = require('../../config/dbConnection.js');
+  
+  let hostname = req.hostname;
   let data_original = {...req.body};
   var org = 0
   var bd = 'masterDB'
-  try{
-    org = await utils.getDocumentByQuery({'collection':'organizations','twilioAccountId':data_original['AccountSid']},bd);
-    const accountId =org.twilioAccountId;
-    const authToken = org.twilioAuthToken;
-    var twilio = require('twilio')(accountId, authToken);
-  }catch(e){
-    org = 0;
-    console.log("Error conference GET ORG",e)
-  }  
   
-  const db = await connection(org["_id"].toString()); // obtenemos la conexión   
-  const collection = db.collection(collection_name);
+       //1er paso
+    var socket_config = {
+		    "config": {
+		        "apiKey": config["masterDB"]["apiKey"],
+		        "securityKey": config["masterDB"]["securityKey"],
+		        "organization_Id": config["masterDB"]["_id"],
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		//query to get Org from MasterDB
+		var crudSocket = await ServerCrud.SocketInitAsync(socket_config);
+		var getOrg = await ServerCrud.ReadDocumentListAsync(crudSocket,{
+			collection: "organizations",
+      operator: {
+				filters: [{
+					name: 'domains',
+					operator: "$in",
+					value: [hostname]
+				}]
+      }
+		}, socket_config.config);
+		
+		var org = getOrg["data"]["data"][0]
+		
+		
+			  var socket_config = {
+		    "config": {
+		        "apiKey": org["apiKey"],
+		        "securityKey": org["securityKey"],
+		        "organization_Id": org["_id"].toString(),
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		var crudSocketAsync = await ServerCrud.SocketInitAsync(socket_config);
+		
+		var getOrg = await ServerCrud.ReadDocumentListAsync(crudSocketAsync,{
+			collection: "organizations",
+      operator: {
+				filters: [{
+					name: '_id',
+					operator: "$eq",
+					value: [org["_id"].toString()]
+				}]
+      }
+		}, socket_config.config);
+		var org = getOrg["data"]['data'][0]
+		console.log("Org ,confer ",org,org["_id"])
+		// mas abajo se guardaron objetos del status
+    try{
+      //org = await utils.getDocumentByQuery({'collection':'organizations','twilioAccountId':data_original['AccountSid']},bd);
+      const accountId =org["apis"]["twilio"]["twilioAccountId"];
+      const authToken = org["apis"]["twilio"]["twilioAuthToken"];
+      	console.log("Org ,confer ",authToken,accountId)
+      var twilio = require('twilio')(accountId, authToken);
+    }catch(e){
+      console.log("Error connect twilio in routes conference")
+      return
+    }  
+	await sleep(1000)
+            function sleep(ms) {
+              return new Promise((resolve) => {
+                setTimeout(resolve, ms);
+              });
+            }
+  
   let callData = {};
 
   let status = data_original['StatusCallbackEvent'];
-  
+  console.log("Original",data_original)
   switch (status) {
     case 'participant-leave':
     case 'conference-end':
-      callData = await collection.findOne({"ConferenceSid":data_original["ConferenceSid"]});
+      let call_sid = data_original["CallSidEndingConference"] ? data_original["CallSidEndingConference"] : data_original["CallSid"]
+      console.log("call_sid ",call_sid)
+      callData = await ServerCrud.ReadDocumentListAsync(crudSocketAsync,{
+                      			collection: collection_name,
+                             operator: {
+                               filters: [{
+                        					name: 'ParentCallSid',
+                        					operator: "$eq",
+                        					value: [data_original["CallSidEndingConference"]]
+                        				}]
+                              }
+                        		}, socket_config.config);
+      
+      callData = callData["data"]["data"][0]
+    
+      if (typeof(callData) != 'undefined' &&   Object.keys(callData).length){
+      console.log("CallData => ",callData)
       const data_parent = await twilio.calls(callData["ParentCallSid"]).fetch()
       if(Object.keys(data_parent).indexOf('from') !== -1 && data_parent['from'].indexOf('client') === -1){
             data_parent["direction"] = 'inbound-dial';
@@ -150,6 +259,8 @@ router.post('/calls_events_conference', async (req, res)=>{
             data_parent["direction"] = 'outbound-dial';
         }
       data_original = data_parent;
+        
+      }
     break;
     case 'participant-hold':
       data_original['status'] = 'hold-conference';
@@ -162,38 +273,94 @@ router.post('/calls_events_conference', async (req, res)=>{
     break;
   }
   if(data_original['status'] !== 'completed')
-  {
-    callData = await collection.findOne({"ParentCallSid":data_original["CallSid"]});
-    if(callData==null)
-      callData = await collection.findOne({"ConferenceSid":data_original["ConferenceSid"]});
+  if(callData != null && Object.keys(callData).length){
+    console.log("callData data ",callData)
+  
+  ServerCrud.UpdateDocument({
+            collection: collection_name,
+            data: data_original,
+            broadcast_sender: true,
+            broadcast: true,
+            document_id : callData._id.toString()
+          }, socket_config.config);
   }
-  /*
-  CoCreateCRUD.UpdateDocument({
-      collection: collection_name,
-      data: data_original,
-      broadcast_sender: true,
-      broadcast: true,
-      document_id : callData._id.toString()
-  }, socket.config);
-  */
+  res.send("holakk")
 });
 
 router.post('/calls_events', async (req, res)=>{
   try{
     let data_original = {...req.body}
-    const connection = require('../../config/dbConnection.js');
+    let hostname = req.hostname;
     var org = 0
-    var bd = 'masterDB'
+    
+    //1er paso
+    var socket_config = {
+		    "config": {
+		        "apiKey": config["masterDB"]["apiKey"],
+		        "securityKey": config["masterDB"]["securityKey"],
+		        "organization_Id": config["masterDB"]["_id"],
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		//query to get Org from MasterDB
+		var crudSocket = await ServerCrud.SocketInitAsync(socket_config);
+				
+		var getOrg = await ServerCrud.ReadDocumentListAsync(crudSocket,{
+			collection: "organizations",
+      operator: {
+				filters: [{
+					name: 'domains',
+					operator: "$in",
+					value: [hostname]
+				}]
+      }
+		}, socket_config.config);
+		
+		//delete coneccion to master or not ?
+		if(!getOrg){
+		  return
+		}
+		//2do paso create conexion con la Org que cumpla las condiciones del dominio
+		var org = getOrg["data"]['data'][0]
+		//console.log("ORg ",org)
+		//console.log("_ID",org["_id"],org._id)
+	  var socket_config = {
+		    "config": {
+		        "apiKey": org["apiKey"],
+		        "securityKey": org["securityKey"],
+		        "organization_Id": org["_id"].toString(),
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		var crudSocketAsync = await ServerCrud.SocketInitAsync(socket_config);
+		
+		var getOrg = await ServerCrud.ReadDocumentListAsync(crudSocketAsync,{
+			collection: "organizations",
+      operator: {
+				filters: [{
+					name: '_id',
+					operator: "$eq",
+					value: [org["_id"].toString()]
+				}]
+      }
+		}, socket_config.config);
+		var org = getOrg["data"]['data'][0]
+		//console.log("ORG...===",org)
+		// mas abajo se guardaron objetos del status
     try{
-      org = await utils.getDocumentByQuery({'collection':'organizations','twilioAccountId':data_original['AccountSid']},bd);
-      const accountId =org.twilioAccountId;
-      const authToken = org.twilioAuthToken;
+      //org = await utils.getDocumentByQuery({'collection':'organizations','twilioAccountId':data_original['AccountSid']},bd);
+      const accountId =org["apis"]["twilio"]["twilioAccountId"];
+      const authToken = org["apis"]["twilio"]["twilioAuthToken"];
       var twilio = require('twilio')(accountId, authToken);
+      
     }catch(e){
-      org = 0;
+      console.log("Error connect twilio in routes")
+      return
     }  
-    const db = await connection(org["_id"].toString()); // obtenemos la conexión   
-    const collection = db.collection(collection_name);
+   
+    //console.log("=====>>>>> ",org._id.toString())
     let callData = {};
     data_original = {...data_original, organization_id: org._id.toString()};
     let status = data_original['CallStatus']
@@ -208,44 +375,84 @@ router.post('/calls_events', async (req, res)=>{
 
     switch (status) {
       case 'ringing':
-            /*CoCreateCRUD.CreateDocument({
+          
+            ServerCrud.CreateDocumentAsync(crudSocketAsync,{
               	collection: collection_name,
               	broadcast_sender: true,
               	broadcast: true,
               	data: data_original,
-            }, socket.config);
-        */
+            }, socket_config.config);
+            
         break;
         case 'in-progress':
         case 'answered':
-          callData = await collection.findOne({"CallSid":data_original["CallSid"]});
-          CoCreateCRUD.UpdateDocument({
+         callData = await ServerCrud.ReadDocumentListAsync(crudSocketAsync,{
+                      			collection: collection_name,
+                             operator: {
+                        				fetch: {
+                        					name: 'CallSid',
+                        					value: data_original["CallSid"]
+                        				}
+                              }
+                        		}, socket_config.config);
+      		var crudSocket = await ServerCrud.SocketInit(socket_config);
+          ServerCrud.UpdateDocument({
             collection: collection_name,
             data: data_original,
             broadcast_sender: true,
             broadcast: true,
             document_id : callData._id.toString()
-          }, socket.config);
-          break;
+          }, socket_config.config);
+        break;
         case 'completed':
         case 'busy':
         case 'no-answer':
-          callData = await collection.findOne({"CallSid":data_original["CallSid"]});
+           await sleep(3000)
+            function sleep(ms) {
+              return new Promise((resolve) => {
+                setTimeout(resolve, ms);
+              });
+            }
+          //console.log("socket_config",socket_config)
+          //console.log("data_original",data_original)
+          callData = await ServerCrud.ReadDocumentListAsync(crudSocketAsync,{
+                      			collection: collection_name,
+                             operator: {
+                        				filters: [{
+                        					name: 'CallSid',
+                        					operator: "$eq",
+                        					value: [data_original["CallSid"]]
+                        				}]
+                              }
+                        		}, socket_config.config);
+         // console.log("callData ´´´´",callData)
           if(callData == null)
-            callData = await collection.findOne({"ParentCallSid":data_original["ParentCallSid"]});
-          status_update = (callData["status"] !=='hold') ? status : callData["status"];
+              callData = await ServerCrud.ReadDocumentListAsync(crudSocketAsync,{
+                        			collection: collection_name,
+                               operator: {
+                          				filters: [{
+                        					name: 'ParentCallSid',
+                        					operator: "$eq",
+                        					value: [data_original["ParentCallSid"]]
+                        				}]
+                                }
+                          		}, socket_config.config);
+          callData = callData['data']['data'][0]
+          //console.log(" ... -> ",callData)
+          
+          let status_update = (callData["status"] !=='hold') ? status : callData["status"];
           data_parent["status"] = status_update;
           data_parent["CallStatus"] = status;
           data_parent["CallSid"] = data_original["CallSid"]
-          /*
-          CoCreateCRUD.UpdateDocument({
-            collection: collection_name,
-            data: data_parent,
-            broadcast_sender: true,
-            broadcast: true,
-            document_id : callData._id.toString()
-          }, socket.config);
-          */
+          
+          ServerCrud.UpdateDocumentAsync(crudSocketAsync,{
+              collection: collection_name,
+              data: data_original,
+              broadcast_sender: true,
+              broadcast: true,
+              document_id : callData._id.toString()
+          }, socket_config                                                                                                               .config);
+            
           break;
     }
   }catch(e){

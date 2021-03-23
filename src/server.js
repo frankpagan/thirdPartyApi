@@ -1,5 +1,5 @@
 'use strict';
-
+var cors = require('cors')
 const express = require('express');
 const { createServer } = require('http');
 const init = require("./init")
@@ -8,12 +8,13 @@ const urlencoded = require('body-parser').urlencoded;
 const wsManager = new WSManager('api');
 
 const app = express();
+app.use(cors())
 const port = process.env.PORT || 8082;
 
 app.use(urlencoded({ extended: false }));
 app.use(express.static('public'));
 
-app.get('/api_/hello', (req, res) => {
+app.post('/api_/hello', (req, res) => {
   console.log('connected')
   res.send('Hello World');
 })

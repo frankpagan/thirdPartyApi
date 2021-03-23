@@ -4,6 +4,7 @@ const confReseller = require("./config/reseller");
 let resellerclub = confReseller.resellerclub;
 let url_reseller = confReseller.url_reseller;
 var utils= require('../utils');
+var ServerCrud = require("@cocreate/server-crud/src/index.js");
 
 
 
@@ -32,30 +33,69 @@ class CoCreateDomain {
 	async sendDomain(socket, data) {
 	    let that = this;
 	    console.log("REqust in Domain")
-        let data_original = {...data};
+        //let data_original = {...data};
+        let data_original = {...data["data"]}
+		const params = data['data'];
         let type = data['type'];
         let type_origin = data['type'];
         let domainName = '';
+        
+        //connect SocketCocreateCrud
+        
+        const socket_config = {
+    	    "config": {
+    	        "apiKey": params["apiKey"],
+    	        "securityKey": params["securityKey"],
+    	        "organization_Id": params["organization_id"],
+    	    },
+    	    "prefix": "ws",
+    	    "host": "server.cocreate.app:8088"
+    	}
+    	
+    	var crudSocket = await ServerCrud.SocketInitAsync(socket_config);
+    	var org_row = await ServerCrud.ReadDocumentAsync(crudSocket,{
+    		collection: "organizations",
+    		document_id: params["organization_id"]
+    	}, socket_config.config);
+    	let org_data;
+    	let apiKeysOrg;
+    	try{
+    		org_data = org_row["data"]["data"];
+    		console.log(this.module_id+": org_data",org_data)
+    		apiKeysOrg =org_data.apis["domain"];
+    	  }catch(e){
+    		console.log("Reseller : Error GET ORG",e);
+    		return false;
+    	  }
+	 
+    	 // connect domain reseller api
+    	 try{
+    	     let enviroment = 'prod'; //'test'
+            //let enviroment = 'test'
+            let keys  = apiKeysOrg[enviroment]
+            var url_reseller = keys['url_reseller'];//'https://httpapi.com'
+            console.log(url_reseller)
+            var apikeys = keys['apikeys'];
+            console.log(apikeys)
+            resellerclub.connect(apikeys)
+            					.then(res => console.log(res))
+            					.catch(err => console.log(err));
+    	 }catch(e){
+    	   	console.log(this.module_id+" : Error Connect to api Reseller",e)
+    	   	return false;
+    	 }
+	 
+        
         //delete data['type'];
         let url = '';
         let method = '';
         let send_response ='domain';
         let isDelete = (type.indexOf('Delete') != -1);
-        // type = type.substr(0,type.indexOf( (type.indexOf('Delete') !=-1 ) ? 'RecordDeleteBtn' : 'RecordBtn')).toLowerCase();
-        
-        // get type for transer, search, ...
         if (type.indexOf('Record') !== -1)
         type = type.substr(0, type.indexOf('Record')).toLowerCase();
-
-        //delete first point to class
-        //type = type.substr(1);
-        console.log("Type ",type)
-        console.log("DATA ORIGIN ",data)
-        //dataToSend 
-        data = {'type':data_original['type'] ,...data_original["data"]}
+        data = {'type':data['type'] ,...data_original["data"]}
         let data_response = {'type':type_origin ,'response':data_original["data"]}
-        //{ "type": type, "response": data }
-        console.log("=Type ",type)
+        
         switch (type) {
             case 'executeAction':
                 console.log(" data_response ",data_response)

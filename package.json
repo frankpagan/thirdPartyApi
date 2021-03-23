@@ -21,7 +21,7 @@
     "javascript-framework"
   ],
   "scripts": {
-    "start": "node src/server.js",
+    "start": "PORT=3002 node src/server.js",
     "dev": "PORT=3002 nodemon src/server.js",
     "docs": "node ./node_modules/@cocreate/docs/src/index.js"
   },
@@ -37,9 +37,10 @@
   "homepage": "https://cocreate.app/docs/CoCreateApi",
   "dependencies": {
     "@cocreate/docs": "^1.0.3",
-    "@cocreate/server-crud": "^1.0.0",
+    "@cocreate/server-crud": "^1.2.0",
     "@sendgrid/mail": "^7.4.2",
     "axios": "^0.21.1",
+    "cors": "^2.8.5",
     "csvtojson": "^2.0.10",
     "express": "^4.17.1",
     "express-session": "^1.17.1",

@@ -18,6 +18,38 @@ class CoCreatePlaid {
         const type = data['type'];
         const params = data['data'];
         const plaid = require('plaid');
+        
+        /*const params = data['data'];
+        const socket_config = {
+		    "config": {
+		        "apiKey": params["apiKey"],
+		        "securityKey": params["securityKey"],
+		        "organization_Id": params["organization_id"],
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		ServerCrud.SocketInit(socket_config)
+		
+		// await fg = ServerCrud.ReadDocument({
+		ServerCrud.ReadDocument({
+			collection: "organizations",
+			document_id: params["organization_id"]
+		}, socket_config.config);
+		
+		ServerCrud.listen('readDocument', function(data) {
+			console.log("module_id",module_id)
+			try{
+			  console.log("------ readDocument ",data)
+		  	console.log("------ aPIKEY ",data["data"]["apis"][module_id])
+		  
+			}
+			 catch(e){
+			  console.log(" --- Error ",e)
+			}
+			//ServerCrud.SocketDestory(socket_config);
+		});
+        */
 
         const client = new plaid.Client({
             clientID: "5f64c507166e6d0012449b6c",
