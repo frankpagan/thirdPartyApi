@@ -1,13 +1,19 @@
 /* global Y */
 'use strict'
 var utils= require('../utils');
+var ServerCrud = require("@cocreate/server-crud/src/index.js");
+/*const CoCreateBase = require("../../core/CoCreateBase");
 
-const { getOrg } = require("../../utils/crud.js");
-
+class CoCreateStripe extends CoCreateBase {
+	constructor(wsManager, db) {
+		super(wsManager, db);
+		this.module_id = "stripe";
+		this.init();
+	}
+*/
 class CoCreateStripe {
 	constructor(wsManager) {
 		this.module_id = 'stripe';
-		this.enviroment = 'test'; //'test'
 		this.wsManager = wsManager;
 		this.init();
 		
@@ -24,25 +30,52 @@ class CoCreateStripe {
 	    let send_response ='stripe';
 	    let data_original = {...data};
 	    const params = data['data'];
-	    //console.log("Stripe ",data_original);
+	    console.log("Stripe ",data_original);
         let type = data['type'];
         delete data['type'];
         let url = '';
         let method = '';
         let targets = [];
         let tags = [];
-        // key_stripe = 'sk_test_4eC39HqLyjWDarjtT1zdp7dc'
+        let key_stripe = 'sk_test_4eC39HqLyjWDarjtT1zdp7dc'
+       
+        const socket_config = {
+    	    "config": {
+    	        "apiKey": params["apiKey"],
+    	        "securityKey": params["securityKey"],
+    	        "organization_Id": params["organization_id"],
+    	    },
+    	    "prefix": "ws",
+    	    "host": "server.cocreate.app:8088"
+    	}
+    	
+    	var crudSocket = await ServerCrud.SocketInitAsync(socket_config);
+    	var org_row = await ServerCrud.ReadDocumentAsync(crudSocket,{
+    		collection: "organizations",
+    		document_id: params["organization_id"]
+    	}, socket_config.config);
+    	let org_data;
+    	let apiKeysOrg;
+    	try{
+    		org_data = org_row["data"]["data"];
+    		apiKeysOrg =org_data["apis"]["stripe"];
+    	  }catch(e){
+    		console.log(this.module_id+": Error GET ORG",e);
+    		return false;
+    	  }
     	 // connect api
     	 let stripe = false;
-      	 try{
-      	       let enviroment = typeof params['enviroment'] != 'undefined' ? params['enviroment'] : this.enviroment;
-               let org_row = await getOrg(params,this.module_id);
-               let key = org_row['apis.'+this.module_id+'.'+enviroment];
-               stripe = require('stripe')(key);
-      	 }catch(e){
-      	   	console.log(this.module_id+" : Error Connect to api",e)
-      	   	return false;
-      	 }
+    	 try{
+    	     let enviroment = 'prod'; //'test'
+            //let enviroment = 'test'
+            let key  = apiKeysOrg[enviroment]
+            stripe = require('stripe')(key);
+    	 }catch(e){
+    	   	console.log(this.module_id+" : Error Connect to api",e)
+    	   	return false;
+    	 }
+  
+          
         /*Address*/
         
         switch (type) {

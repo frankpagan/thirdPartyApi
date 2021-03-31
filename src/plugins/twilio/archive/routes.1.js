@@ -12,11 +12,145 @@ let collection_name = "testtwilio";
 
 const { getOrg, getOrgInRoutesbyHostname } = require("../../utils/crud.js");
 
+// var CRUD = require("CoCreate-server-crud/src/index.js");
+var CRUD = require("@cocreate/server-crud/src/index.js");
+
 router.get('/test_crud2', async (req, res) => {
    let org = await getOrgInRoutesbyHostname(req.hostname);
-   console.log(org)
    res.send({"org":org});
 });
+
+router.get('/test_crud', async (req, res) => {
+  console.log("Test_crud")
+      //1er paso
+      var socket_config = {
+  		    "config": {
+  		        "apiKey": config["masterDB"]["apiKey"],
+  		        "securityKey": config["masterDB"]["securityKey"],
+  		        "organization_Id": config["masterDB"]["_id"],
+  		    },
+  		    "prefix": "ws",
+  		    "host": "server.cocreate.app:8088"
+  		}
+  		//query to get Org from MasterDB
+  		CRUD.connect(socket_config);
+  		let eventGetOrg = "YYYYYYYYY";
+  		CRUD.readDocumentList({
+       collection: "organizations",
+        operator: {
+  				filters: [{
+  					name: 'domains',
+  					operator: "$in",
+  					value: [req.hostname]
+  				}]
+        },
+        // "async": true,
+        "event": eventGetOrg,
+      }, socket_config.config)
+      
+      console.log("Before Await")
+     let data2 = await CRUD.listenAsync(eventGetOrg);
+      console.log("after Await",data2["data"][0]);
+      
+    var org = data2["data"][0]
+	  var socket_config = {
+		    "config": {
+		        "apiKey": org["apiKey"],
+		        "securityKey": org["securityKey"],
+		        "organization_Id": org["_id"].toString(),
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		//other connection
+		CRUD.connect(socket_config);
+		
+
+	 CRUD.readDocumentList({
+			collection: "organizations",
+      operator: {
+				filters: [{
+					name: '_id',
+					operator: "$eq",
+					value: [org["_id"].toString()]
+				}]
+      },
+       "event": "getDataOrg",
+		}, socket_config.config);
+	
+	console.log("Before Await MyOrg")
+     let myOrg = await CRUD.listenAsync("getDataOrg");
+      console.log("after Await MyOrg ",myOrg);
+      
+     res.send({"orgMaster":org,"myOrg":myOrg});
+     
+});
+
+
+
+ var getOrgByHostname = async(hostname)=>{
+    //1er paso
+    var socket_config = {
+		    "config": {
+		        "apiKey": config["masterDB"]["apiKey"],
+		        "securityKey": config["masterDB"]["securityKey"],
+		        "organization_Id": config["masterDB"]["_id"],
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		//query to get Org from MasterDB
+		var crudSocket = await ServerCrud.SocketInitAsync(socket_config);
+	
+				
+		var getOrg = await ServerCrud.ReadDocumentListAsync(crudSocket,{
+			collection: "organizations",
+      operator: {
+				filters: [{
+					name: 'domains',
+					operator: "$in",
+					value: [hostname]
+				}]
+      }
+		}, socket_config.config);
+		
+		//delete coneccion to master or not ?
+		if(!getOrg){
+		  return null
+		}
+		
+		//2do paso create conexion con la Org que cumpla las condiciones del dominio
+		var org = getOrg["data"]['data'][0]
+			console.log("OrgData 1",getOrg,hostname)
+	console.log("OrgData2 ",getOrg["data"]['data'])
+	  var socket_config = {
+		    "config": {
+		        "apiKey": org["apiKey"],
+		        "securityKey": org["securityKey"],
+		        "organization_Id": org["_id"].toString(),
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		//other connection
+		var crudSocketAsync = await ServerCrud.SocketInitAsync(socket_config);
+		var getOrg = await ServerCrud.ReadDocumentListAsync(crudSocketAsync,{
+			collection: "organizations",
+      operator: {
+				filters: [{
+					name: '_id',
+					operator: "$eq",
+					value: [org["_id"].toString()]
+				}]
+      }
+		}, socket_config.config);
+		var result = {
+		    'row':getOrg["data"]['data'][0],
+		    'crudSocketAsync':crudSocketAsync,
+		    'socket_config':socket_config
+		}
+		return result;
+}
 
 
 router.get('/token/:clientName?', async (req, res) => {

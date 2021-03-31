@@ -1,12 +1,11 @@
 'use strict'
 var utils= require('../utils');
-const { getOrg } = require("../../utils/crud.js");
+var ServerCrud = require("@cocreate/server-crud/src/index.js");
 
 
 class CoCreateXXX {
 	constructor(wsManager) {
 		this.module_id = 'xxx';
-		this.enviroment = 'test';
 		this.wsManager = wsManager;
 		this.init();
 		
@@ -20,13 +19,12 @@ class CoCreateXXX {
 	async sendXXX(socket, data, roomInfo) {
 	    let that = this;
         let type = data['type'];
-        let params = data.data;
+        let requestData = data.data;
 
         switch (type) {
-            case 'xxxGetKeysFromBd':
-            	let enviroment = typeof params['enviroment'] != 'undefined' ? params['enviroment'] : this.enviroment;
-        		let org_row = await getOrg(params,this.module_id);
-                utils.send_response(that.wsManager, socket, {"type":type,"response":org_row}, this.module_id)
+            case 'xxxCreateRequest':
+                // utils.send_response(that.wsManager, socket, {"type":type,"response":data.data}, this.module_id)
+                this.receiveMessage(socket, type, requestData);
                 break;
 			case 'xxxCreateCard':
 				utils.send_response(that.wsManager, socket, {"type":type,"response":data.data}, this.module_id)
@@ -34,10 +32,9 @@ class CoCreateXXX {
         }
         
 	}// end sendStripe
-	/*
+	
 	receiveMessage(socket, type, data) {
 		const self = this;
-		
 
 		console.log(data);
 		const socket_config = {
@@ -98,6 +95,6 @@ class CoCreateXXX {
 		await ServerCrud.DeleteDocumentAsync(socket);
 		
 	}
-	*/
+	
 }//end Class 
 module.exports = CoCreateXXX;

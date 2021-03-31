@@ -3,10 +3,10 @@ const utils = require('../utils');
 const axios = require("axios").default;
 const sgMail = require('@sendgrid/mail');
 
-const { getOrg } = require("../../utils/crud.js");
+var ServerCrud = require("@cocreate/server-crud/src/index.js");
 
-//const apiKey = 'Bearer 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';
-//sgMail.setApiKey('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');
+const apiKey = 'Bearer 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';
+sgMail.setApiKey('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');
 
 //old:- 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
 //new:- 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
@@ -17,10 +17,8 @@ class CoCreateSendGrid {
   constructor(wsManager) {
     this.wsManager = wsManager;
     this.module_id = "sendgrid";
-    this.enviroment = 'test';
     this.init();
     this.apiKey = null;
-    this.apiKeyMail = null;
   }
 
   init() {
@@ -35,18 +33,36 @@ class CoCreateSendGrid {
     const params = data['data'];
     const module_id = this.module_id;
     
-    	 // connect api
-  	 try{
-  	       let enviroment = typeof params['enviroment'] != 'undefined' ? params['enviroment'] : this.enviroment;
-           let org_row = await getOrg(params,this.module_id);
-           this.apiKey = org_row['apis.'+this.module_id+'.'+enviroment+'.apiKey'];
-           this.apiKeyMail = org_row['apis.'+this.module_id+'.'+enviroment+'.apiKeyMail'];
-           sgMail.setApiKey(this.apiKeyMail);
-  	 }catch(e){
-  	   	console.log(this.module_id+" : Error Connect to api",e)
-  	   	return false;
-  	 }
-  
+    
+    const socket_config = {
+		    "config": {
+		        "apiKey": params["apiKey"],
+		        "securityKey": params["securityKey"],
+		        "organization_Id": params["organization_id"],
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		ServerCrud.SocketInit(socket_config)
+		
+		// await fg = ServerCrud.ReadDocument({
+		ServerCrud.ReadDocument({
+			collection: "organizations",
+			document_id: params["organization_id"]
+		}, socket_config.config);
+		
+		ServerCrud.listen('readDocument', function(data) {
+			console.log("module_id",module_id)
+			try{
+			  console.log("------ readDocument ",data)
+		  	console.log("------ aPIKEY ",data["data"]["apis"][module_id])
+		  
+			}
+			 catch(e){
+			  console.log(" --- Error ",e)
+			}
+			//ServerCrud.SocketDestory(socket_config);
+		});
 		
 		
 		/// WE NEED APIKEY IN ALL METHODS, BUT APIKEY IS ON SOCKET LISTEN
@@ -136,7 +152,7 @@ class CoCreateSendGrid {
     try {
       const { data } = await axios.get(`${hostName}/whitelabel/domains`, {
         "headers": {
-          "authorization": this.apiKey,
+          "authorization": apiKey,
         }
       })
       const resposne = {
@@ -161,7 +177,7 @@ class CoCreateSendGrid {
         automatic_security: true
       }, {
         "headers": {
-          "authorization": this.apiKey,
+          "authorization": apiKey,
         }
       })
       utils.send_response(this.wsManager, socket, { "type": type, "response": data }, this.module_id)
@@ -180,7 +196,7 @@ class CoCreateSendGrid {
         email
       }, {
         "headers": {
-          "authorization": this.apiKey,
+          "authorization": apiKey,
         }
       })
       utils.send_response(this.wsManager, socket, { "type": type, "response": data }, this.module_id)
@@ -200,7 +216,7 @@ class CoCreateSendGrid {
         ips
       }, {
         "headers": {
-          "authorization": this.apiKey,
+          "authorization": apiKey,
         }
       })
       utils.send_response(this.wsManager, socket, { "type": type, "response": data }, this.module_id)
@@ -214,7 +230,7 @@ class CoCreateSendGrid {
     try {
       const { data } = await axios.get(`${hostName}/subusers`, {
         "headers": {
-          "authorization": this.apiKey,
+          "authorization": apiKey,
         }
       })
       const resposne = {
@@ -232,7 +248,7 @@ class CoCreateSendGrid {
     try {
       const { data } = await axios.get(`${hostName}/marketing/contacts`, {
         "headers": {
-          "authorization": this.apiKey,
+          "authorization": apiKey,
         }
       })
       const resposne = {
@@ -265,7 +281,7 @@ class CoCreateSendGrid {
         ]
       }, {
         "headers": {
-          "authorization": this.apiKey,
+          "authorization": apiKey,
           "Content-Type": "application/json"
         }
       })
@@ -280,7 +296,7 @@ class CoCreateSendGrid {
     try {
       const { data } = await axios.get(`${hostName}/marketing/stats/automations`, {
         "headers": {
-          "authorization": this.apiKey,
+          "authorization": apiKey,
         }
       })
       const resposne = {
@@ -298,7 +314,7 @@ class CoCreateSendGrid {
     try {
       const { data } = await axios.get(`${hostName}/marketing/stats/singlesends`, {
         "headers": {
-          "authorization": this.apiKey,
+          "authorization": apiKey,
         }
       })
       const resposne = {
@@ -317,7 +333,7 @@ class CoCreateSendGrid {
       const { email } = params
       const { data } = await axios.post(`${hostName}/validations/email`, { email }, {
         "headers": {
-          "authorization": this.apiKey,
+          "authorization": apiKey,
           "Content-Type": "application/json"
         }
       })
@@ -332,13 +348,13 @@ class CoCreateSendGrid {
     try {
       const { data:userEmail } = await axios.get(`${hostName}/user/email`, {
         "headers": {
-          "authorization": this.apiKey,
+          "authorization": apiKey,
           "Content-Type": "application/json"
         }
       })
         const { data } = await axios.get(`${hostName}/verified_senders`, {
         "headers": {
-          "authorization": this.apiKey,
+          "authorization": apiKey,
           "Content-Type": "application/json"
         }
       })
@@ -358,7 +374,7 @@ class CoCreateSendGrid {
       const { id_domain } = params
       const { data } = await axios.post(`${hostName}/whitelabel/domains/${id_domain}/validate`,{}, {
         "headers": {
-          "authorization": this.apiKey,
+          "authorization": apiKey,
         }
       })
       
@@ -376,7 +392,7 @@ class CoCreateSendGrid {
     };
     utils.send_response(this.wsManager, socket, { type, response }, this.module_id);
   }
-  
+ 
 }
 
 module.exports = CoCreateSendGrid;
