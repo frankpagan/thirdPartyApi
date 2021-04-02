@@ -4,6 +4,7 @@ var utils= require('../utils');
 // const CoCreateBase = require("../../core/CoCreateBase");
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 var ServerCrud = require("@cocreate/server-crud/src/index.js");
+const { getOrg } = require("../../utils/crud.js");
 
 // ServerCrud.createDocument()
 // ServerCrud.readDocument()
@@ -98,29 +99,12 @@ class CoCreateTwilio {
 		  */
 		  
 		let url_twilio = data_original.data.url ? data_original.data.url : 'https://server.cocreate.app:8088/api_/twilio/actions_twiml';		 
-		 const socket_config = {
-		    "config": {
-		        "apiKey": params["apiKey"],
-		        "securityKey": params["securityKey"],
-		        "organization_Id": params["organization_id"],
-		    },
-		    "prefix": "ws",
-		    "host": "server.cocreate.app:8088"
-		}
-		
-		var crudSocket = await ServerCrud.SocketInitAsync(socket_config);
-		
-		var org_twilioKey = await ServerCrud.ReadDocumentAsync(crudSocket,{
-			collection: "organizations",
-			document_id: params["organization_id"]
-		}, socket_config.config);
-		let org =0;
-		var client;
-		let org_data;
-		org_data = org_twilioKey["data"]["data"]
-		console.log("org_data",org_data)
-		console.log(org_data['apis.twilio.twilioAuthToken'])
+		let org = 0; 
+		let client;
 		try{
+		   let org_data = await getOrg(params,this.module_id);
+		   console.log("org_data Twilio ",org_data)
+           
 			const accountId =org_data['apis.twilio.twilioAccountId'];//org_data["apis"]["twilio"]["twilioAccountId"];
     		const authToken = org_data['apis.twilio.twilioAuthToken'];
     		console.log("accountId, authToken",accountId, authToken)

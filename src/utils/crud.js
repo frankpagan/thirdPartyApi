@@ -77,5 +77,6 @@
          "event": "getDataOrg",
 	}, socket_config.config);
     let myOrg = await crud.listenAsync("getDataOrg");
-    return myOrg;
+    let result = {'row':myOrg,'socket_config':socket_config};
+    return result;
  }

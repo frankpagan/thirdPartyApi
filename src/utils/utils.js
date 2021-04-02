@@ -1,4 +1,5 @@
-const connection = require('../config/dbConnection.js');
+
+/*const connection = require('../config/dbConnection.js');
 var ObjectID = require('mongodb').ObjectID;
 module.exports = {
   getDocument: async (data,dbName) => {
@@ -21,10 +22,6 @@ module.exports = {
       console.log(" Catch Error finOne ---",e)
       return null;
     }
-    /*finally {
-      //client.close();
-      //console.log(" finlllay ")
-    }*/
   },
   getDocumentByQuery: async (data,dbName) => {
     
@@ -60,24 +57,7 @@ module.exports = {
     try {
       const db = await connection(dbName); // obtenemos la conexión      
       
-      /*console.log(" before")
-      db.listCollections().toArray(function (err, collectionInfos) {
-        
-        console.log(collectionInfos);
-        
-    });*/
-    
-    
-  
-/*    var myobj = { domains: ["server.cocreate.app","cocreate.app"], route: '/test/twiml', collection: "module_activities", document_id: '5ee3937ce3fc3a5b7493dc37' ,name : 'xml',content_type : 'text/xml'};
-  db.collection("routes").insertOne(myobj, function(err, res) {
-    if (err) throw err;
-    console.log("1 document inserted");
-
-  });
-  */
-    
-    
+      
       //console.log("-- Await ",await db.getCollectionNames())
       const collection = db.collection('routes');
       //console.log(" collection ",collection)
@@ -89,9 +69,6 @@ module.exports = {
       console.log(" Catch Error ---",e)
       return null;
     }
-    /*finally {
-      console.log("Error FindOne")
-     return null;
-    }*/
   }
 }
+*/

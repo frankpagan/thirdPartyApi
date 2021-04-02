@@ -1,10 +1,10 @@
 {
-    "db_url_old": "mongodb://127.0.0.1:27017",
-    "db_url": "mongodb+srv://cocreate-app:123@cocreatedb.dnjr1.mongodb.net",
-    "redis": {
-    	"host": "54.156.111.118",
-    	"port": 6379
-    },
+    // "db_url_old": "mongodb://127.0.0.1:27017",
+    // "db_url": "mongodb+srv://cocreate-app:123@cocreatedb.dnjr1.mongodb.net",
+    // "redis": {
+    // 	"host": "54.156.111.118",
+    // 	"port": 6379
+    // },
     "masterDB":{
         "_id":"5ae0cfac6fb8c4e656fdaf92",
         "apiKey":"38ffd014-c33b-4202-c54b-ac46a0a4",

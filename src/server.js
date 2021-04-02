@@ -3,9 +3,10 @@ var cors = require('cors')
 const express = require('express');
 const { createServer } = require('http');
 const init = require("./init")
-const WSManager = require("./core/WSManager");
 const urlencoded = require('body-parser').urlencoded;
-const wsManager = new WSManager('api');
+
+const SocketServer = require("@cocreate/socket-server")
+const wsManager = new SocketServer('api');
 
 const app = express();
 app.use(cors())
