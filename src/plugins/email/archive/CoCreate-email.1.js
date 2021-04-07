@@ -2,7 +2,18 @@
 'use strict'
 var utils= require('../utils');
 
-class CoCreateEmail {
+
+// const CoCreateBase = require("../../core/CoCreateBase");
+//const {ObjectID, Binary} = require("mongodb");
+
+// class CoCreateEmail extends CoCreateBase {
+// 	constructor(wsManager, db) {
+// 		super(wsManager, db);
+// 		this.init();
+// 		this.url_wilddock = 'http://3.231.17.247:8080';
+// 	}
+	
+	class CoCreateEmail {
 	constructor(wsManager) {
 		this.module_id = 'email';
 		this.wsManager = wsManager;
@@ -16,6 +27,7 @@ class CoCreateEmail {
 		}
 	}
 	async sendEmail(socket, data) {
+	    
 	    console.log("emaiul from lee");
         let data_original = data;
         let type = data['type'];
@@ -25,6 +37,38 @@ class CoCreateEmail {
         let targets = [];
         let tags = [];
         /*Address*/
+        
+        /*const params = data['data'];
+        const socket_config = {
+		    "config": {
+		        "apiKey": params["apiKey"],
+		        "securityKey": params["securityKey"],
+		        "organization_Id": params["organization_id"],
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		ServerCrud.SocketInit(socket_config)
+		
+		// await fg = ServerCrud.ReadDocument({
+		ServerCrud.ReadDocument({
+			collection: "organizations",
+			document_id: params["organization_id"]
+		}, socket_config.config);
+		
+		ServerCrud.listen('readDocument', function(data) {
+			console.log("module_id",module_id)
+			try{
+			  console.log("------ readDocument ",data)
+		  	console.log("------ aPIKEY ",data["data"]["apis"][module_id])
+		  
+			}
+			 catch(e){
+			  console.log(" --- Error ",e)
+			}
+			//ServerCrud.SocketDestory(socket_config);
+		});
+        */
         
         switch (type) {
             case '.emailCreateAddressBtn':

@@ -1,6 +1,5 @@
 'use strict'
 const utils = require('../utils');
-const { getOrg } = require("../../utils/crud.js");
 
 class CoCreatePlaid {
     constructor(wsManager) {
@@ -20,22 +19,13 @@ class CoCreatePlaid {
         const type = data['type'];
         const params = data['data'];
         const plaid = require('plaid');
-        const client = null;
        
-        try{
-      	       let enviroment = typeof params['enviroment'] != 'undefined' ? params['enviroment'] : this.enviroment;
-               let org_row = await getOrg(params,this.module_id);
-               client = new plaid.Client({
-                    clientID: org_row['apis.'+this.module_id+'.'+enviroment+'.clientID'],
-                    secret: org_row['apis.'+this.module_id+'.'+enviroment+'.secret'],
-                    env: plaid.environments.sandbox,
-                });
-      	 }catch(e){
-      	   	console.log(this.module_id+" : Error Connect to api",e)
-      	   	return false;
-      	 }
 
-        
+        const client = new plaid.Client({
+            clientID: "5f64c507166e6d0012449b6c",
+            secret: "3132debb49806b95f75a35e1e1bdc5",
+            env: plaid.environments.sandbox,
+        });
         switch (type) {
             case 'plaidGetLinkToken':
                 this.plaidGetLinkToken(socket, type, client, params);

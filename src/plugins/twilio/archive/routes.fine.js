@@ -98,11 +98,22 @@ router.post('/voice', async (req, res) => {
 
 
 router.post('/calls_events_conference', async (req, res)=>{
-    let data_original = {...req.body};
+ /*
+ await sleep(1000)
+            function sleep(ms) {
+              return new Promise((resolve) => {
+                setTimeout(resolve, ms);
+              });
+            }
+            */
+  let data_original = {...req.body};
+  
     let org = await getOrgInRoutesbyHostname(req.hostname);
+    
    	let socket_config = org["socket_config"];
    	org = org["row"]["data"][0];
     try{
+      //org = await utils.getDocumentByQuery({'collection':'organizations','twilioAccountId':data_original['AccountSid']},bd);
       const accountId =org["apis"]["twilio"]["twilioAccountId"];
       const authToken = org["apis"]["twilio"]["twilioAuthToken"];
       var twilio = require('twilio')(accountId, authToken);
@@ -110,8 +121,9 @@ router.post('/calls_events_conference', async (req, res)=>{
       console.log("Error connect twilio in routes conference")
       return
     }  
-      let callData = {};
-      let call_sid = data_original["CallSidEndingConference"] ? data_original["CallSidEndingConference"] : data_original["CallSid"]
+  let callData = {};
+        let call_sid = data_original["CallSidEndingConference"] ? data_original["CallSidEndingConference"] : data_original["CallSid"]
+      console.log("call_sid => ",call_sid)
       crud.readDocumentList({
                       			collection: collection_name,
                              operator: {
@@ -125,18 +137,26 @@ router.post('/calls_events_conference', async (req, res)=>{
                         		}, socket_config.config);
       callData = await crud.listenAsync("getCall");
       callData = callData["data"][0];
+      
   let status = data_original['StatusCallbackEvent'];
+  console.log("status.  ",status)
+  //console.log("data originalk ",data_original)
   switch (status) {
     case 'participant-leave':
     case 'conference-end':
+
+          
+    
       if (typeof(callData) != 'undefined' &&   Object.keys(callData).length){
-          const data_parent = await twilio.calls(callData["ParentCallSid"]).fetch()
-          if(Object.keys(data_parent).indexOf('from') !== -1 && data_parent['from'].indexOf('client') === -1){
-                data_parent["direction"] = 'inbound-dial';
-            }else{
-                data_parent["direction"] = 'outbound-dial';
-            }
-            data_original = data_parent;
+      console.log("CallData => ",callData)
+      const data_parent = await twilio.calls(callData["ParentCallSid"]).fetch()
+      if(Object.keys(data_parent).indexOf('from') !== -1 && data_parent['from'].indexOf('client') === -1){
+            data_parent["direction"] = 'inbound-dial';
+        }else{
+            data_parent["direction"] = 'outbound-dial';
+        }
+      data_original = data_parent;
+        
       }
       data_original['status'] = 'completed';
     break;
@@ -150,22 +170,26 @@ router.post('/calls_events_conference', async (req, res)=>{
       data_original['status'] = 'in-progress-conference';
     break;
   }
+  console.log("Finish => ",data_original['status'],Object.keys(callData).length)
    // if(data_original['status'] !== 'completed')
   if(callData != null && Object.keys(callData).length){
-      crud.updateDocument({
-                collection: collection_name,
-                data: data_original,
-                broadcast_sender: true,
-                broadcast: true,
-                document_id : callData._id.toString()
-              }, socket_config.config);
-        }
-        res.send("holakk")
+    //console.log("callData did  ",callData._id.toString())
+  //console.log("callData data before update ",data_original)
+  crud.updateDocument({
+            collection: collection_name,
+            data: data_original,
+            broadcast_sender: true,
+            broadcast: true,
+            document_id : callData._id.toString()
+          }, socket_config.config);
+    }
+  res.send("holakk")
 });
 
 router.post('/calls_events', async (req, res)=>{
   try{
     let data_original = {...req.body}
+    console.log("call_events ",data_original)
    	let org = await getOrgInRoutesbyHostname(req.hostname);
    	let socket_config = org["socket_config"];
     org = org["row"]["data"][0];
@@ -188,6 +212,7 @@ router.post('/calls_events', async (req, res)=>{
     }
     data_original['status'] = status
     data_parent['status'] = status
+console.log("status ",status)
     switch (status) {
       case 'ringing':
             crud.createDocument({
@@ -211,6 +236,8 @@ router.post('/calls_events', async (req, res)=>{
                         		}, socket_config.config);
           callData = await crud.listenAsync("getCall");
           callData = callData["data"][0];
+          
+      		//var crudSocket = await ServerCrud.SocketInit(socket_config);
           crud.updateDocument({
             collection: collection_name,
             data: data_original,
@@ -223,16 +250,16 @@ router.post('/calls_events', async (req, res)=>{
         case 'busy':
         case 'no-answer':      		
            crud.readDocumentList({
-                collection: collection_name,
-                operator: {
-            				filters: [{
-            					name: 'CallSid',
-            					operator: "$eq",
-            					value: [data_original["CallSid"]]
-            				}]
-                 },
-                "event": "getCall",
-        		}, socket_config.config);
+                      			collection: collection_name,
+                             operator: {
+                        				filters: [{
+                        					name: 'CallSid',
+                        					operator: "$eq",
+                        					value: [data_original["CallSid"]]
+                        				}]
+                              },
+                              "event": "getCall",
+                        		}, socket_config.config);
           callData = await crud.listenAsync("getCall");
           callData = callData["data"][0];
           if(callData == null){
@@ -250,21 +277,23 @@ router.post('/calls_events', async (req, res)=>{
               callData = await crud.listenAsync("getCallbyParent");
               callData = callData["data"][0];
           }
+          console.log(" ... -> ",callData)
+          
           let status_update = (callData["status"] !=='hold') ? status : callData["status"];
           if(callData["status"] !=='hold'){
-              data_parent["status"] = status_update;
-              data_parent["CallStatus"] = status;
-              data_parent["CallSid"] = data_original["CallSid"]
-              
-              crud.updateDocument({
-                  collection: collection_name,
-                  data: data_original,
-                  broadcast_sender: true,
-                  broadcast: true,
-                  document_id : callData._id.toString()
-              }, socket_config                                                                                                               .config);
+          data_parent["status"] = status_update;
+          data_parent["CallStatus"] = status;
+          data_parent["CallSid"] = data_original["CallSid"]
+          
+          crud.updateDocument({
+              collection: collection_name,
+              data: data_original,
+              broadcast_sender: true,
+              broadcast: true,
+              document_id : callData._id.toString()
+          }, socket_config                                                                                                               .config);
           }
-         break;
+          break;
     }
   }catch(e){
     console.log("Error en events  ===>>> ",e.toString())

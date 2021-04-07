@@ -1,3 +1,4 @@
+ //var crud = require("@cocreate/server-crud");
 const crud = require('@cocreate/crud-client')
 const CoCreateSocketClient = require('@cocreate/socket-client')
 let socket = new CoCreateSocketClient("ws");
@@ -7,33 +8,31 @@ crud.setSocket(socket);
 
  
  module.exports.getOrg = async function(params,module) {
- 	console.log(params)
-    const socket_config = { 
+    const socket_config = {
 	    "config": {
 	        "apiKey": params["apiKey"],
 	        "securityKey": params["securityKey"],
-	        "organization_id": params["organization_id"],
+	        "organization_Id": params["organization_id"],
 	    },
 	    "prefix": "ws",
 	    "host": "server.cocreate.app:8088"
 	}
 	socket.create({
-		namespace: socket_config.config.organization_id,
+	  namespace: socket_config.config.organization_id,
 		room: null,
 		host: socket_config.host
 	})
-    const event = "getOrg";
+    socket.setGlobalScope(socket_config.config.organization_id)
     
     crud.readDocument({
         collection: "organizations",
         document_id: params["organization_id"],
-        event,
+        "event": "getOrg",
         apiKey: params["apiKey"],
 	    securityKey: params["securityKey"],
 	    organization_id: params["organization_id"]
-    });
-    let org_row = await crud.listenAsync(event);
-    console.log(org_row)
+    }, socket_config.config);
+    let org_row = await crud.listenAsync("getOrg");
     try{
 		org_row =org_row["data"];
 	  }catch(e){
@@ -58,8 +57,9 @@ crud.setSocket(socket);
 			room: null,
 			host: socket_config.host
 		})
+	    socket.setGlobalScope(socket_config.config.organization_id)
   		let eventGetOrg = "getOrginMaster";
-  		crud.readDocument({
+  		crud.readDocumentList({
     	collection: "organizations",
         operator: {
   				filters: [{
@@ -68,13 +68,10 @@ crud.setSocket(socket);
   					value: [hostname]
   				}]
         },
+        // "async": true,
         "event": eventGetOrg,
-        apiKey: config["config"]["apiKey"],
-	    securityKey: config["config"]["securityKey"],
-	    organization_id: config["config"]["organization_id"]
-      });
+      }, socket_config.config);
      let data2 = await crud.listenAsync(eventGetOrg);
-     console.log("data2",data2)
    
 	 var org = data2["data"][0]
 
@@ -88,6 +85,7 @@ crud.setSocket(socket);
 		    "host": "server.cocreate.app:8088"
 		}
 		//other connection
+	 //crud.createSocket(socket_config);
 	socket.create({
 	  namespace: socket_config.config.organization_id,
 		room: null,
@@ -104,7 +102,7 @@ crud.setSocket(socket);
 						}]
 		      },
          "event": "getDataOrg",
-	});
+	}, socket_config.config);
     let myOrg = await crud.listenAsync("getDataOrg");
     let result = {'row':myOrg,'socket_config':socket_config};
     return result;

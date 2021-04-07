@@ -1,8 +1,15 @@
+/*
+    "masterDB":{
+        "organization_id":"5ae0cfac6fb8c4e656fdaf92",
+        "apiKey":"38ffd014-c33b-4202-c54b-ac46a0a4",
+        "securityKey":"69faeace-b065-4c87-b880-22c2f0f3"
+    }
+    */
 module.exports = {
     config: {
-        apiKey: "c2b08663-06e3-440c-ef6f-13978b42883a",
-        securityKey: "f26baf68-e3a9-45fc-effe-502e47116265",
-        organization_Id: "5de0387b12e200ea63204d6c",
+        organization_id:"5ae0cfac6fb8c4e656fdaf92",
+        apiKey:"38ffd014-c33b-4202-c54b-ac46a0a4",
+        securityKey:"69faeace-b065-4c87-b880-22c2f0f3",
         host: "server.cocreate.app:8088"
     },
  

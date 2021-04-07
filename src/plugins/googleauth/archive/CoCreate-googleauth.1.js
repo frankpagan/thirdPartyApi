@@ -7,21 +7,17 @@ const {OAuth2Client} = require('google-auth-library');
 const open = require('open');
 const url = require('url');
 const destroyer = require('server-destroy');
-const { getOrg } = require("../../utils/crud.js");
 
-/*const GOOGLE_CLIENT_ID = '91782570889-prijbuhl4elvci1n1tj97p4o0fr49rvo.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = '91782570889-prijbuhl4elvci1n1tj97p4o0fr49rvo.apps.googleusercontent.com';
 const GOOGLE_CLIENT_SECRET = '7FxDX60Xm-xPxn3Okmk-R4tq';
 
-*/
+
 
 class CoCreateDataGoogleAuth {
 	constructor(wsManager) {
 		this.module_id = 'googleauth';
 		this.wsManager = wsManager;
 		this.init();
-		this.GOOGLE_CLIENT_ID=null;
-		this.GOOGLE_CLIENT_SECRET=null;
-		this.enviroment = 'test';
 		
 	}
 	
@@ -33,19 +29,39 @@ class CoCreateDataGoogleAuth {
 	async GoogleAuthOperations(socket, data) {
 	    let that = this;
         let type = data['type'];
-        const params = data['data'];
         
-        try{
-      	       let enviroment = typeof params['enviroment'] != 'undefined' ? params['enviroment'] : this.enviroment;
-               let org_row = await getOrg(params,this.module_id);
-               this.GOOGLE_CLIENT_ID = org_row['apis.'+this.module_id+'.'+enviroment+'.GOOGLE_CLIENT_ID'];
-               this.GOOGLE_CLIENT_SECRET = org_row['apis.'+this.module_id+'.'+enviroment+'.GOOGLE_CLIENT_SECRET'];
-      	 }catch(e){
-      	   	console.log(this.module_id+" : Error Connect to api",e)
-      	   	return false;
-      	 }
-        
-      
+        /*const params = data['data'];
+        const socket_config = {
+		    "config": {
+		        "apiKey": params["apiKey"],
+		        "securityKey": params["securityKey"],
+		        "organization_Id": params["organization_id"],
+		    },
+		    "prefix": "ws",
+		    "host": "server.cocreate.app:8088"
+		}
+		ServerCrud.SocketInit(socket_config)
+		
+		// await fg = ServerCrud.ReadDocument({
+		ServerCrud.ReadDocument({
+			collection: "organizations",
+			document_id: params["organization_id"]
+		}, socket_config.config);
+		
+		ServerCrud.listen('readDocument', function(data) {
+			console.log("module_id",module_id)
+			try{
+			  console.log("------ readDocument ",data)
+		  	console.log("------ aPIKEY ",data["data"]["apis"][module_id])
+		  
+			}
+			 catch(e){
+			  console.log(" --- Error ",e)
+			}
+			//ServerCrud.SocketDestory(socket_config);
+		});
+        */
+
         switch (type) {
             case 'generateAuthURL':
                 const oAuth2Client = await this.getAuthenticatedClient(that, socket, type);
@@ -64,8 +80,8 @@ class CoCreateDataGoogleAuth {
     // create an oAuth client to authorize the API call.  Secrets are kept in a `keys.json` file,
     // which should be downloaded from the Google Developers Console.
     const oAuth2Client = new OAuth2Client(
-      this.GOOGLE_CLIENT_ID,
-      this.GOOGLE_CLIENT_SECRET,
+      GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET,
       'http://52.203.210.252:3000/oauth2callback'
     );
 

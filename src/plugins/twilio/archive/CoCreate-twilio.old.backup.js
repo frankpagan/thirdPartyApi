@@ -2,38 +2,53 @@
 var utils= require('../utils');
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const { getOrg } = require("../../utils/crud.js");
+
 let collection_name = "testtwillio";
+
 
 class CoCreateTwilio {
 	constructor(wsManager) {
 		this.module_id = 'twilio';
 		this.wsManager = wsManager;
 		this.init();
+		
 	}
+
+
 	init() {
 		if (this.wsManager) {
 			this.wsManager.on(this.module_id,		(socket, data, roomInfo) => this.sendTwilio(socket, data, roomInfo));
 		}
 	}
+	
 	async sendTwilio(socket, data, roomInfo) {
+		console.log("GEt data action twilio ",data)
 		let data_original = {...data["data"]};
 		let that = this;
 		let send_response ='twilio';
 		let type = data['type'];
 		const twiml = new VoiceResponse();
 		const params = data['data'];
+		
 		let url_twilio = data_original.data.url ? data_original.data.url : 'https://server.cocreate.app:8088/api_/twilio/actions_twiml';		 
 		let org = 0; 
 		let client;
 		try{
 		   let org_data = await getOrg(params,this.module_id);
+		   //console.log("org_data Twilio ",org_data)
+           
 			const accountId =org_data['apis.twilio.twilioAccountId'];//org_data["apis"]["twilio"]["twilioAccountId"];
     		const authToken = org_data['apis.twilio.twilioAuthToken'];
+    		console.log("accountId, authToken",accountId, authToken)
 			client = require('twilio')(accountId, authToken);
+			console.log("accountId-----, authToken",accountId, authToken)
 		  }catch(e){
 			org = 0;
 			console.log("Error connect twilio",e)
 		  }  
+	
+		console.log("type",type)
+		
 		switch (type) {
 			case 'callRecordingCreate':
 				client.calls(data_original.data.CallSid)
@@ -69,6 +84,7 @@ class CoCreateTwilio {
 					r['url_public'] = 'https://api.twilio.com/2010-04-01/Accounts/'+config.accountSid+'/Recordings/'+r.sid+'.mp3';
 					response_recordings.push(r);
 				});
+				
 				utils.send_response(that.wsManager, socket, {"type":type,"response":response_recordings}, send_response)
 			  });
 			break;
@@ -135,13 +151,16 @@ class CoCreateTwilio {
 				utils.send_response(that.wsManager, socket, {"type":type,"response":data_original.data}, send_response);
 			break;
 			case 'dialConference':
+				console.log("CreateConference ",data_original)
 				try{
 					data_original["create_conference"] = false;
 					let CallSid = data_original.data.CallSid
+					console.log("CallSid",CallSid)
 					if(!CallSid){
 						throw "NoExisteCallSid";
 					}
 					if(CallSid != undefined){
+						console.log("Create Conference ",CallSid)
 						client.calls(CallSid)
 						.fetch()
 						.then(async call => {
@@ -196,6 +215,7 @@ class CoCreateTwilio {
 						})
 				  );
 			break;
+			
 			case 'endConference':
 				client.conferences(data_original.data.CallSid)
 				  .update({status: 'completed'})
@@ -271,6 +291,7 @@ class CoCreateTwilio {
 						utils.send_response(that.wsManager, socket, {"type":type,"response":data}, send_response);	
 					});
 			break;
+			
 			case 'response':
 				try{
 					let result = this.runResonse(twiml, data.data);
@@ -281,46 +302,27 @@ class CoCreateTwilio {
 					console.log(e);
 					utils.send_response(that.wsManager, socket, {"type":type,"response":data_original}, send_response);
 				}
-			break;
-			case 'dial':
-				try{
-					data_original["create_conference"] = false;
-						let CallSid = data_original.data.CallSid
-						if(!CallSid){
-							throw "NoExisteCallSid";
-						}
-						if(CallSid != undefined){
-							client.calls(CallSid)
-							.fetch()
-							.then(async call => {
-								let result = this.runResonse(twiml, data.data);
-								await client.calls(call.parentCallSid).update({
-									twiml : result
-								});
-								utils.send_response(that.wsManager, socket, {"type":type,"response":data_original}, send_response)
-							});
-						}
-				}catch(e){
-					console.log(e);
-					data_original["create_conference"] = true;
-					utils.send_response(that.wsManager, socket, {"type":type,"response":data_original}, send_response);			
-				}
-			break;
+				
 		}
 	}// end sendTwilio
 	
 	runResonse(response, data) {
+		
 		if (typeof data !== 'object' || data == null) return null;
+		
 		let nouns = Object.keys(data).filter(x => x !== '__param' && x !== '__props');
 		let latestResult = "";
 		const self = this;
+		
 		nouns.forEach(noun => {
 			let nounDataList  = [];
+			
 			if (Array.isArray(data[noun])) {
 				nounDataList = data[noun];
 			} else {
 				nounDataList.push(data[noun]);
 			}
+			
 			for (const requestData of nounDataList ) {
 				if (!requestData.__props) continue;
 				
@@ -330,6 +332,7 @@ class CoCreateTwilio {
 				} else {
 					result = response[noun](requestData.__props, requestData.__param);
 				}
+				
 				latestResult = result.toString();
 				if (result) {
 					let deep_result = self.runResonse(result, requestData);
@@ -342,5 +345,38 @@ class CoCreateTwilio {
 		})
 		return latestResult;
 	} //. end runresponse function
+	
+	__applyData(source, data)
+	{
+		if (Array.isArray(source)) {
+			source.push(data);
+		} else {
+			source = data;
+		}
+		return source;
+	}
+	
+	__testFunc(response) {
+		var gather = response.gather({
+			input: "speech dtmf",
+			numDigits: "1",
+			timeout: "3"
+		});
+		
+		var r1 = gather.say("Hello 01-- Say");
+		console.log('result 1------------------------');
+		console.log(r1.toString())
+		
+		var r2 = response.say("Say 1");
+		console.log('result 2-----------------------------')
+		console.log(r2.toString())
+		
+		var r3 = response.say("Say 2");
+		console.log('result 3-----------------------------')
+		console.log(r3.toString());
+		
+		return r3.toString();
+	}
+	
 }//end Class 
 module.exports = CoCreateTwilio;

@@ -31,6 +31,8 @@ class CoCreateStripe {
         let method = '';
         let targets = [];
         let tags = [];
+        // key_stripe = 'sk_test_4eC39HqLyjWDarjtT1zdp7dc'
+    	 // connect api
     	 let stripe = false;
       	 try{
       	       let enviroment = typeof params['enviroment'] != 'undefined' ? params['enviroment'] : this.enviroment;

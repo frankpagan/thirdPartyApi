@@ -1,12 +1,14 @@
 'use strict'
 const utils = require('../utils');
 const request = require('request');
-const API_KEY = "TEST_QpHdYyPmniSoWSH9AdiJslPAHzo5wkhU4q4EjWwSF0k";
-
+//const API_KEY = "TEST_QpHdYyPmniSoWSH9AdiJslPAHzo5wkhU4q4EjWwSF0k";
+const { getOrg } = require("../../utils/crud.js");
 class CoCreateShipengine {
     constructor(wsManager) {
         this.module_id = 'shipengine';
         this.wsManager = wsManager;
+        this.enviroment = 'test';
+        this.API_KEY = null;
         this.init();
 
     }
@@ -19,37 +21,17 @@ class CoCreateShipengine {
 
     async sendDataShipEngine(socket, data) {
         let type = data['type'];
-        /*const params = data['data'];
-        const socket_config = {
-		    "config": {
-		        "apiKey": params["apiKey"],
-		        "securityKey": params["securityKey"],
-		        "organization_Id": params["organization_id"],
-		    },
-		    "prefix": "ws",
-		    "host": "server.cocreate.app:8088"
-		}
-		ServerCrud.SocketInit(socket_config)
-		
-		// await fg = ServerCrud.ReadDocument({
-		ServerCrud.ReadDocument({
-			collection: "organizations",
-			document_id: params["organization_id"]
-		}, socket_config.config);
-		
-		ServerCrud.listen('readDocument', function(data) {
-			console.log("module_id",module_id)
-			try{
-			  console.log("------ readDocument ",data)
-		  	console.log("------ aPIKEY ",data["data"]["apis"][module_id])
-		  
-			}
-			 catch(e){
-			  console.log(" --- Error ",e)
-			}
-			//ServerCrud.SocketDestory(socket_config);
-		});
-        */
+        const params = data['data'];
+       
+        try{
+      	       let enviroment = typeof params['enviroment'] != 'undefined' ? params['enviroment'] : this.enviroment;
+               let org_row = await getOrg(params,this.module_id);
+               this.API_KEY =  org_row['apis.'+this.module_id+'.'+enviroment+'.API_KEY'];
+      	 }catch(e){
+      	   	console.log(this.module_id+" : Error Connect to api",e)
+      	   	return false;
+      	 }
+
         switch (type) {
             case 'getCarriers':
                 await this.getCarriers(socket, type);
@@ -76,7 +58,7 @@ class CoCreateShipengine {
             'url': 'https://api.shipengine.com/v1/carriers',
             'headers': {
                 'Host': 'api.shipengine.com',
-                'API-Key': API_KEY
+                'API-Key': this.API_KEY
             }
         };
         
@@ -122,7 +104,7 @@ class CoCreateShipengine {
             'url': 'https://api.shipengine.com/v1/shipments',
             'headers': {
                 'Host': 'api.shipengine.com',
-                'API-Key': API_KEY,
+                'API-Key': this.API_KEY,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(sendData)
@@ -155,7 +137,7 @@ class CoCreateShipengine {
             'url': 'https://api.shipengine.com/v1/rates',
             'headers': {
                 'Host': 'api.shipengine.com',
-                'API-Key': API_KEY,
+                'API-Key': this.API_KEY,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(sendData)
@@ -203,7 +185,7 @@ class CoCreateShipengine {
             'url': 'https://api.shipengine.com/v1/labels',
             'headers': {
                 'Host': 'api.shipengine.com',
-                'API-Key': API_KEY,
+                'API-Key': this.API_KEY,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(sendData)
@@ -228,7 +210,7 @@ class CoCreateShipengine {
             'url': `https://api.shipengine.com/v1/labels/${reqData.labelId}/track`,
             'headers': {
                 'Host': 'api.shipengine.com',
-                'API-Key': API_KEY,
+                'API-Key': this.API_KEY,
                 'Cache-Control': 'no-cache'
             }
         };
