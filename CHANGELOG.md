@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.2...v1.1.3) (2021-04-07)
+
+
+### Bug Fixes
+
+* update to server client structure ([68cb35c](https://github.com/CoCreate-app/CoCreateApi/commit/68cb35caf96e93a5dff031e1e8c24d9be3cbf506))
+
 ## [1.1.2](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.1...v1.1.2) (2021-03-07)
 
 
