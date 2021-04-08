@@ -1,3 +1,10 @@
+## [1.1.7](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.6...v1.1.7) (2021-04-08)
+
+
+### Bug Fixes
+
+* package.json ([a556817](https://github.com/CoCreate-app/CoCreateApi/commit/a5568170575d50ea3aaf6cce30459bb10e08abe8))
+
 ## [1.1.6](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.5...v1.1.6) (2021-04-08)
 
 
