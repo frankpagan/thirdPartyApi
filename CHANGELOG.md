@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.4...v1.1.5) (2021-04-08)
+
+
+### Bug Fixes
+
+* crud-client dependency ([de67ee8](https://github.com/CoCreate-app/CoCreateApi/commit/de67ee83bdd3063f12fcdf38d8e0693541727e90))
+
 ## [1.1.4](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.3...v1.1.4) (2021-04-08)
 
 
