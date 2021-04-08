@@ -36,8 +36,8 @@
   },
   "homepage": "https://cocreate.app/docs/CoCreateApi",
   "dependencies": {
+    "@cocreate/crud-client": "^1.0.0",
     "@cocreate/docs": "^1.0.3",
-    "@cocreate/crud-client": "^1.2.0",
     "@sendgrid/mail": "^7.4.2",
     "axios": "^0.21.1",
     "cors": "^2.8.5",
