@@ -1,3 +1,10 @@
+## [1.1.10](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.9...v1.1.10) (2021-04-09)
+
+
+### Bug Fixes
+
+* updated to latest version of crud and socket server ([bdd5db3](https://github.com/CoCreate-app/CoCreateApi/commit/bdd5db3d8726c2862ccbab095455723076d48f32))
+
 ## [1.1.9](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.8...v1.1.9) (2021-04-08)
 
 
