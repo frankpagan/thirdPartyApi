@@ -262,7 +262,7 @@ router.post('/calls_events', async (req, res)=>{
                   broadcast_sender: true,
                   broadcast: true,
                   document_id : callData._id.toString()
-              }, socket_config                                                                                                               .config);
+              }, socket_config.config);
           }
          break;
     }

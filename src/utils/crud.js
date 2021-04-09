@@ -44,7 +44,7 @@ crud.setSocket(socket);
 }
 
  module.exports.getOrgInRoutesbyHostname = async function(hostname) {
- 	var socket_config = {
+ 		var socket_config = {
   		    "config": {
   		        "apiKey": config["config"]["apiKey"],
   		        "securityKey": config["config"]["securityKey"],
@@ -53,13 +53,35 @@ crud.setSocket(socket);
   		    "prefix": "ws",
   		    "host": "server.cocreate.app:8088"
   		};
+  		
   		socket.create({
-		  namespace: socket_config.config.organization_id,
+			namespace: socket_config.config.organization_Id,
 			room: null,
 			host: socket_config.host
 		})
+
   		let eventGetOrg = "getOrginMaster";
-  		crud.readDocument({
+  		
+  		 crud.readDocumentList({
+	        collection: "organizations",
+	        operator: {
+	  				filters: [{
+	  					name: 'domains',
+	  					operator: "$in",
+	  					value: [hostname]
+	  				}],
+	  				orders: [],
+	  				startIndex: 0,
+	  				search: { type: 'or', value: []}
+	        },
+	        event: eventGetOrg,
+	        is_collection: false,
+	        apiKey: config["config"]["apiKey"],
+		    securityKey: config["config"]["securityKey"],
+		    organization_id: config["config"]["organization_id"]
+	    });
+    
+  	/*	crud.readDocument({
     	collection: "organizations",
         operator: {
   				filters: [{
@@ -72,9 +94,11 @@ crud.setSocket(socket);
         apiKey: config["config"]["apiKey"],
 	    securityKey: config["config"]["securityKey"],
 	    organization_id: config["config"]["organization_id"]
-      });
+      });*/
+      
+      console.log("trigger event get org")
      let data2 = await crud.listenAsync(eventGetOrg);
-     console.log("data2",data2)
+     console.log("data2 ===",data2)
    
 	 var org = data2["data"][0]
 
@@ -89,7 +113,7 @@ crud.setSocket(socket);
 		}
 		//other connection
 	socket.create({
-	  namespace: socket_config.config.organization_id,
+	  namespace: socket_config.config.organization_Id,
 		room: null,
 		host: socket_config.host
 	})
@@ -101,9 +125,16 @@ crud.setSocket(socket);
 							name: '_id',
 							operator: "$eq",
 							value: [org["_id"].toString()]
-						}]
+						}],
+						orders: [],
+		  				startIndex: 0,
+		  				search: { type: 'or', value: []}
 		      },
          "event": "getDataOrg",
+         is_collection: false,
+         apiKey: org["apiKey"],
+	    securityKey: org["securityKey"],
+	    organization_id: org["_id"]
 	});
     let myOrg = await crud.listenAsync("getDataOrg");
     let result = {'row':myOrg,'socket_config':socket_config};

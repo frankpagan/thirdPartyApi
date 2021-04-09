@@ -32,4 +32,3 @@ module.exports.WSManager = function(manager) {
 	new CoCreateXXX(manager);
 
 }
-
