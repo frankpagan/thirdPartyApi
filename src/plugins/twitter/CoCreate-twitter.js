@@ -6,13 +6,6 @@ const Twitter = require("twit");
 
 const utils = require('../utils');
 
-// const consumer_key =  'hOugAN32rGsFldgxqYyJIJDTH';
-// const consumer_secret =  'OSoVFrQxSk25OioMQZt77X7JOp95RE3HEVYh8pmnGpCgOa1rW1';
-// const access_token =  '1314075796005253120-cSjwbxAOskNJWWBNla1hZwDzJu1oNU';
-// const access_token_secret = 'iBzFp3hqGIdEzZNaYtsZTXoXWNyoOHvihT2ns43mTJpIk';
-// const bearer_token = 'AAAAAAAAAAAAAAAAAAAAAMTWIQEAAAAATRpXMf%2Bugq2MynRAd9McR2JIap8%3DnfJMaMpiCenN6OlmJstmCaWI7NCiO0oSrwePRaLDZUBXNM2lrj';
-// const client = new Twitter({ consumer_key, consumer_secret, access_token,  access_token_secret  });
-
 let client;
 
 

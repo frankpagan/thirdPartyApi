@@ -9,10 +9,6 @@ const url = require('url');
 const destroyer = require('server-destroy');
 const { getOrg } = require("../../utils/crud.js");
 
-/*const GOOGLE_CLIENT_ID = '91782570889-prijbuhl4elvci1n1tj97p4o0fr49rvo.apps.googleusercontent.com';
-const GOOGLE_CLIENT_SECRET = '7FxDX60Xm-xPxn3Okmk-R4tq';
-
-*/
 
 class CoCreateDataGoogleAuth {
 	constructor(wsManager) {

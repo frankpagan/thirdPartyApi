@@ -1,7 +1,6 @@
 'use strict'
 const utils = require('../utils');
 const request = require('request');
-//const API_KEY = "TEST_QpHdYyPmniSoWSH9AdiJslPAHzo5wkhU4q4EjWwSF0k";
 const { getOrg } = require("../../utils/crud.js");
 class CoCreateShipengine {
     constructor(wsManager) {

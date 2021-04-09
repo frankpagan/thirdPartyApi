@@ -1,12 +1,7 @@
 'use strict'
 const utils = require('../utils');
 const LinkedInRestClient = require("./LinkedInRestClient");
-/*
-const LINKEDIN_CLIENT_ID = '78mawgifvkfkk1';
-const LINKEDIN_CLIENT_SECRET = 'Yz1UXE9fQRgHFST2';
-const CALL_BACK_URL = 'http://52.203.210.252/CoCreate-linkedin/demo/getProfile.html';
-const ACCESS_TOKEN = 'AQX7GXFDh3wgpheCZYDwzEF-LxRwiygHXXxS6uhzeD5IBqLwO7EMinWKD81qTG8XNgoZ1VsgcELbRBKTGVnErrP74_lMKEAjPIS-7A-PRpdFkP9wlLNi-bjZjl6L58VXv1t9Y5ruCpD_8HnndGvia5MScFLFv4LZH2yYP8VGjJdjpW8z_qL8BBGFLDQgD-nFAwVpetDt2ppv55RR-v6P6ZlFuDM_4c47At5JyYc42dk6tfKoprBQwlhJiMDZuHZEsfFf9L2r-Ej8UDJ9pattv5cYJ1L152YXhKB0MSdNFWs82R9UP8EL-3dd1NpChf1n_wsR49Tq6DtctnzciRyLVYBGmA5LOw';
-*/
+
 const { getOrg } = require("../../utils/crud.js");
 
 class CoCreateLinkedin {

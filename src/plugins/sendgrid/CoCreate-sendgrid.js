@@ -5,12 +5,6 @@ const sgMail = require('@sendgrid/mail');
 
 const { getOrg } = require("../../utils/crud.js");
 
-//const apiKey = 'Bearer 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';
-//sgMail.setApiKey('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');
-
-//old:- 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
-//new:- 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
-
 const hostName = "https://api.sendgrid.com/v3";
 
 class CoCreateSendGrid {

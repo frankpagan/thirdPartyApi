@@ -3,8 +3,8 @@ const utils= require('../utils');
 
 const { Facebook, FacebookApiException } = require("fb");
 
-const APPID = "1804989386230604";
-const appSecret = "e3ba23a03c4cc62cf693eced645e0137";
+const APPID = "";
+const appSecret = "";
 const FB = new Facebook();
 
 class CoCreateDataFacebook {
