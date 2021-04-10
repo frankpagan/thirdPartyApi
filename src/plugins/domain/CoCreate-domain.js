@@ -1,10 +1,7 @@
 /* global Y */
 'use strict'
-const confReseller = require("./config/reseller");
-let resellerclub = confReseller.resellerclub;
-let url_reseller = confReseller.url_reseller;
-var utils= require('../utils');
-//var CRUD = require("@cocreate/server-crud/src/index.js");
+const resellerclub = require("./lib/resellerclub");
+var utils= require('../../utils');
 const { getOrg } = require("../../utils/crud.js");
 
 class CoCreateDomain {
@@ -30,18 +27,18 @@ class CoCreateDomain {
         let type = data['type'];
         let type_origin = data['type'];
         let domainName = '';
-        
-        
-	 
+
     	 // connect domain reseller api
     	 try{
     	    let enviroment = typeof params['enviroment'] != 'undefined' ? params['enviroment'] : this.enviroment;
             let org_row = await getOrg(params,this.module_id);
             var url_reseller = org_row['apis.'+this.module_id+'.'+enviroment+'.url_reseller'];//'https://httpapi.com'
-            resellerclub.connect({
-                               'clientID' :org_row['apis.'+this.module_id+'.'+enviroment+'.clientID'],
-                               'clientSecret':org_row['apis.'+this.module_id+'.'+enviroment+'.clientSecret']
-                                })
+            let apiKeys = {
+                               'clientID' :org_row['apis.'+this.module_id+'.'+enviroment+'.apikeys.clientID'],
+                               'clientSecret':org_row['apis.'+this.module_id+'.'+enviroment+'.apikeys.clientSecret']
+                            }
+            console.log(apiKeys)
+            resellerclub.connect(apiKeys)
             					.then(res => console.log(res))
             					.catch(err => console.log(err));
             					

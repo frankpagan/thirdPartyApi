@@ -27,11 +27,6 @@ router.get('/token/:clientName?', async (req, res) => {
     const authToken = org["apis"]["twilio"]["twilioAuthToken"];
     const appSid = org["apis"]["twilio"]["twilioAccountSid"];
 
-   /* 
-     const accountSid ='ACa677caf4788f8e1ae9451097da1712d0';
-    const authToken = '445c7f892e5c8f98c66a5947c37645fa';
-    const appSid = 'AP7a56503ca9d88d260cd79073ccc177b1';
-    */
     const capability = new ClientCapability({
       accountSid: accountSid,
       authToken: authToken,

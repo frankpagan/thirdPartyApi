@@ -1,5 +1,5 @@
 'use strict';
-const utils = require('../utils');
+const utils = require('../../utils');
 const axios = require("axios").default;
 const sgMail = require('@sendgrid/mail');
 

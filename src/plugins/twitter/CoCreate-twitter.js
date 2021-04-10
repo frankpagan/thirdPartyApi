@@ -4,7 +4,7 @@ const axios = require("axios").default;
 const Twitter = require("twit");
 
 
-const utils = require('../utils');
+const utils = require('../../utils');
 
 let client;
 

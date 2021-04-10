@@ -1,5 +1,5 @@
 'use strict'
-const utils= require('../utils');
+const utils= require('../../utils');
 const lighthouse = require('lighthouse');
 const config = require('./config.js');
 const chromeLauncher = require('chrome-launcher');

@@ -1,5 +1,5 @@
 'use strict'
-const utils = require('../utils');
+const utils = require('../../utils');
 const { getOrg } = require("../../utils/crud.js");
 
 class CoCreatePlaid {

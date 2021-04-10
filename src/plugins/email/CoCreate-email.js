@@ -1,6 +1,6 @@
 /* global Y */
 'use strict'
-var utils= require('../utils');
+var utils= require('../../utils');
 
 class CoCreateEmail {
 	constructor(wsManager) {
