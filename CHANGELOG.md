@@ -1,3 +1,10 @@
+## [1.1.11](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.10...v1.1.11) (2021-04-10)
+
+
+### Bug Fixes
+
+* Cleaned file structure ([7c9dd19](https://github.com/CoCreate-app/CoCreateApi/commit/7c9dd195165739c6b46941634098e04eac8cd9db))
+
 ## [1.1.10](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.9...v1.1.10) (2021-04-09)
 
 
