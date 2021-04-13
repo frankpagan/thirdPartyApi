@@ -5,6 +5,7 @@ const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const ClientCapability = require('twilio').jwt.ClientCapability;
 const url_twilio = 'https://server.cocreate.app:8088/api_/twilio';
 let collection_name = "testtwilio";
+let enviroment_twilio_default = 'test'
 
 const { getOrg, getOrgInRoutesbyHostname } = require("../../utils/crud.js");
 
@@ -20,12 +21,14 @@ router.get('/token/:clientName?', async (req, res) => {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
   try{
+    let data_original = {...req.query};
     const clientName = (typeof(req.params.clientName) != undefined) ? req.params.clientName : '--';
 	 let org = await getOrgInRoutesbyHostname(req.hostname);
     org = org["row"]["data"][0];
-		const accountSid =org["apis"]["twilio"]["twilioAccountId"];
-    const authToken = org["apis"]["twilio"]["twilioAuthToken"];
-    const appSid = org["apis"]["twilio"]["twilioAccountSid"];
+    let enviroment = typeof data_original['enviroment'] != 'undefined' ? data_original['enviroment'] : enviroment_twilio_default;
+		const accountSid =org["apis"]["twilio"][enviroment]["twilioAccountId"];
+    const authToken = org["apis"]["twilio"][enviroment]["twilioAuthToken"];
+    const appSid = org["apis"]["twilio"][enviroment]["twilioAccountSid"];
 
     const capability = new ClientCapability({
       accountSid: accountSid,
@@ -86,7 +89,7 @@ router.post('/voice', async (req, res) => {
             statusCallbackMethod: 'POST'
         },data_original.To);
       
-  }
+  }j
   res.set('Content-Type', 'text/xml');
   res.send(twiml.toString());
 });
@@ -98,8 +101,9 @@ router.post('/calls_events_conference', async (req, res)=>{
    	let socket_config = org["socket_config"];
    	org = org["row"]["data"][0];
     try{
-      const accountId =org["apis"]["twilio"]["twilioAccountId"];
-      const authToken = org["apis"]["twilio"]["twilioAuthToken"];
+      let enviroment = typeof data_original['enviroment'] != 'undefined' ? data_original['enviroment'] : enviroment_twilio_default;
+      const accountId =org["apis"]["twilio"][enviroment]["twilioAccountId"];
+      const authToken = org["apis"]["twilio"][enviroment]["twilioAuthToken"];
       var twilio = require('twilio')(accountId, authToken);
     }catch(e){
       console.log("Error connect twilio in routes conference")
@@ -165,8 +169,9 @@ router.post('/calls_events', async (req, res)=>{
    	let socket_config = org["socket_config"];
     org = org["row"]["data"][0];
     try{
-      const accountId =org["apis"]["twilio"]["twilioAccountId"];
-      const authToken = org["apis"]["twilio"]["twilioAuthToken"];
+      let enviroment = typeof data_original['enviroment'] != 'undefined' ? data_original['enviroment'] : enviroment_twilio_default;
+      const accountId =org["apis"]["twilio"][enviroment]["twilioAccountId"];
+      const authToken = org["apis"]["twilio"][enviroment]["twilioAuthToken"];
       var twilio = require('twilio')(accountId, authToken);
     }catch(e){
       console.log("Error connect twilio in routes")

@@ -8,3 +8,4 @@ images:
 - name: cocreate-api
   newName: docker.pkg.github.com/cocreate-app/cocreateapi/cocreateapi
   newTag: IMAGE_TAG
+
