@@ -25,8 +25,9 @@ class CoCreateSendGrid {
   }
 
   async sendSendGrid(socket, data,roomInfo) {
+    console.log("Data sengrid ",data)
     const type = data['type'];
-    const params = data['data'];
+    let params = data['data'];
     const module_id = this.module_id;
     
     	 // connect api
@@ -35,6 +36,7 @@ class CoCreateSendGrid {
            let org_row = await getOrg(params,this.module_id);
            this.apiKey = org_row['apis.'+this.module_id+'.'+enviroment+'.apiKey'];
            this.apiKeyMail = org_row['apis.'+this.module_id+'.'+enviroment+'.apiKeyMail'];
+           console.log("API sengrid ",this.apiKeyMail)
            sgMail.setApiKey(this.apiKeyMail);
   	 }catch(e){
   	   	console.log(this.module_id+" : Error Connect to api",e)
@@ -44,7 +46,8 @@ class CoCreateSendGrid {
 		
 		
 		/// WE NEED APIKEY IN ALL METHODS, BUT APIKEY IS ON SOCKET LISTEN
-		
+		//vars asign by jeanmendoza 13_abril_2021 params = params["data"];
+		params = params["data"];
     switch (type) {
       case 'sendEmail':
         await this.sendEmail(socket, type, params);
@@ -106,7 +109,6 @@ class CoCreateSendGrid {
   }
 
   async sendEmail(socket, type, params) {
-    console.log(params)
     try {
       const { to, from , subject, text, html } = params
 		const msg = {
@@ -364,9 +366,10 @@ class CoCreateSendGrid {
   }
   
   handleError(socket, type, error) {
+    console.log(error)
     const response = {
       'object': 'error',
-      'data': error.response.data || error.response.body || error.message || error,
+      'data': error.response || error.response.data || error.response.body || error.message || error,
     };
     utils.send_response(this.wsManager, socket, { type, response }, this.module_id);
   }

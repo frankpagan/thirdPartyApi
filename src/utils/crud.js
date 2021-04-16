@@ -7,7 +7,7 @@ crud.setSocket(socket);
 
  
  module.exports.getOrg = async function(params,module) {
- 	console.log(params)
+ 	console.log("params WS utils",params)
     const socket_config = { 
 	    "config": {
 	        "apiKey": params["apiKey"],

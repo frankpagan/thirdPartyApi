@@ -20,12 +20,14 @@ class CoCreateStripe {
 		}
 	}
 	async sendStripe(socket, data,roomInfo) {
+	    console.log("Data Stripe ",data)
 	    let that = this;
 	    let send_response ='stripe';
 	    let data_original = {...data};
 	    const params = data['data'];
 	    //console.log("Stripe ",data_original);
         let type = data['type'];
+        console.log("Type ",type)
         delete data['type'];
         let url = '';
         let method = '';
@@ -34,16 +36,26 @@ class CoCreateStripe {
     	 let stripe = false;
       	 try{
       	       let enviroment = typeof params['enviroment'] != 'undefined' ? params['enviroment'] : this.enviroment;
+      	       console.log("before")
                let org_row = await getOrg(params,this.module_id);
+               console.log("after")
                let key = org_row['apis.'+this.module_id+'.'+enviroment];
+               console.log("key stripe "+key)
                stripe = require('stripe')(key);
       	 }catch(e){
       	   	console.log(this.module_id+" : Error Connect to api",e)
       	   	return false;
       	 }
         /*Address*/
-        
+        console.log("Swift -=> ",type =='listCustomers' )
         switch (type) {
+            
+            case 'listCustomers':
+                console.log("CAse listCustomers ")
+                const customers = await stripe.customers.list({limit: 3,});
+                console.log("customer ",customers)
+                utils.send_response(this.wsManager, socket, { "type": data_original["type"], "response": customers }, this.module_id)
+            break;
             case 'createCharge':
                 this.createCharge(socket,type,data["data"],stripe);
             break;
@@ -85,10 +97,6 @@ class CoCreateStripe {
                   data["data"]
                 );
                 utils.send_response(this.wsManager, socket, { "type": data_original["type"], "response": card }, this.module_id)
-            break;
-            case 'listCustomers':
-                const customers = await stripe.customers.list({limit: 3,});
-                utils.send_response(this.wsManager, socket, { "type": data_original["type"], "response": customers }, this.module_id)
             break;
         }
         
