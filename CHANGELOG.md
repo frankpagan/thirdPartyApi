@@ -1,3 +1,10 @@
+## [1.1.14](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.13...v1.1.14) (2021-04-20)
+
+
+### Bug Fixes
+
+* package manage usage for plugins ([757b3fb](https://github.com/CoCreate-app/CoCreateApi/commit/757b3fbfa254c8f85c3bc93793dd098e9ee0df97))
+
 ## [1.1.13](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.12...v1.1.13) (2021-04-16)
 
 
