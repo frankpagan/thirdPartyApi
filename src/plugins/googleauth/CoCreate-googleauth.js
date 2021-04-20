@@ -28,6 +28,7 @@ class CoCreateDataGoogleAuth {
 	}
 	async GoogleAuthOperations(socket, data) {
 	    let that = this;
+	    console.log("GoogleAuth")
         let type = data['type'];
         const params = data['data'];
         
@@ -62,7 +63,7 @@ class CoCreateDataGoogleAuth {
     const oAuth2Client = new OAuth2Client(
       this.GOOGLE_CLIENT_ID,
       this.GOOGLE_CLIENT_SECRET,
-      'http://52.203.210.252:3000/oauth2callback'
+      'http://52.203.210.252:3004/oauth2callback'
     );
 
     // Generate the url that will be used for the consent dialog.
@@ -77,7 +78,7 @@ class CoCreateDataGoogleAuth {
       .createServer(async (req, res) => {
         try {
           if (req.url.indexOf('/oauth2callback') > -1) {
-            const qs = new url.URL(req.url, 'http://localhost:3000').searchParams;
+            const qs = new url.URL(req.url, 'http://localhost:3004').searchParams;
             const code = qs.get('code');
             console.log(`Code is ${code}`);
             res.end('Authentication successful! Please return to the console.');
@@ -95,7 +96,7 @@ class CoCreateDataGoogleAuth {
           reject(e);
         }
       })
-      .listen(3000, () => {
+      .listen(3004, () => {
           utils.send_response(that.wsManager, socket, {"type":type,"response":authorizeUrl}, this.module_id)
         // // open the browser to the authorize url to start the workflow
         // open(authorizeUrl, {wait: false}).then(cp => cp.unref());

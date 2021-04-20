@@ -110,7 +110,8 @@ class CoCreateSendGrid {
 
   async sendEmail(socket, type, params) {
     try {
-      const { to, from , subject, text, html } = params
+      const { to, from , subject, html } = params
+     let text=(typeof params['text'] == 'undefined') ? 'Cocreate' :  params['text'];
 		const msg = {
 		  to,
 		  from,
@@ -118,7 +119,7 @@ class CoCreateSendGrid {
 		  text,
 		  html,
 		};
-		
+		console.log("msg ",msg)
 		const data = await sgMail.send(msg);
 		
     	utils.send_response(this.wsManager, socket, { "type": type, "response": data }, this.module_id)

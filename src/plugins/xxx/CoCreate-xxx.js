@@ -1,7 +1,17 @@
 'use strict'
 var utils= require('../../utils');
 const { getOrg } = require("../../utils/crud.js");
+// const { checkPermissions } = require("@cocreate/permissions");
 
+/*
+var permission = new CheckPermssion({
+	organization_id: orgid, 
+	apikey: "data.data.apikey",
+	CheckIfTrue: {
+
+    }
+})
+*/
 
 class CoCreateXXX {
 	constructor(wsManager) {

@@ -1,4 +1,5 @@
 
+
 const CoCreateDomain = require('./plugins/domain/CoCreate-domain');
 const CoCreateEmail = require('./plugins/email/CoCreate-email');
 const CoCreateFacebook = require('./plugins/facebook/CoCreate-facebook');
@@ -10,10 +11,10 @@ const CoCreatePlaid = require('./plugins/plaid/CoCreate-plaid');
 const CoCreateSendGrid = require('./plugins/sendgrid/CoCreate-sendgrid'); 
 const CoCreateShipengine = require('./plugins/shipengine/CoCreate-shipengine');
 const CoCreateStripe = require('./plugins/stripe/CoCreate-stripe');
+//const CoCreateStripe = require('@cocreate/stripe')
 const CoCreateTwilio = require('./plugins/twilio/CoCreate-twilio');
 const CoCreateTwitter = require('./plugins/twitter/CoCreate-twitter');
 const CoCreateXXX = require('./plugins/xxx/CoCreate-xxx');
-
 
 module.exports.WSManager = function(manager) {
 	new CoCreateDomain(manager);
@@ -27,6 +28,7 @@ module.exports.WSManager = function(manager) {
 	new CoCreateSendGrid(manager);
 	new CoCreateShipengine(manager);
 	new CoCreateStripe(manager);
+	// new CoCreateStripe(manager , myconfig anything here agreed so here we add utlis and crud and congig);
 	new CoCreateTwilio(manager);
 	new CoCreateTwitter(manager);
 	new CoCreateXXX(manager);

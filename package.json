@@ -30,7 +30,7 @@
     "url": "git+https://github.com/CoCreate-app/CoCreateApi.git"
   },
   "author": "CoCreate LLC",
-  "license": "MIT",
+  "license": "SSPL-1.0",
   "bugs": {
     "url": "https://github.com/CoCreate-app/CoCreateApi/issues"
   },
@@ -40,6 +40,7 @@
     "@cocreate/docs": "^1.0.3",
     "@cocreate/socket-client": "^1.0.3",
     "@cocreate/socket-server": "^1.0.0",
+    "@cocreate/stripe": "^1.1.0",
     "@sendgrid/mail": "^7.4.2",
     "axios": "^0.21.1",
     "cors": "^2.8.5",
