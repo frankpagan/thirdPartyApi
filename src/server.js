@@ -20,7 +20,7 @@ app.post('/api_/hello', (req, res) => {
   res.send('Hello World');
 })
 
-app.use('/api_/twilio', require('./plugins/twilio/routes'));
+// app.use('/api_/twilio', require('./plugins/twilio/routes'));
 
 
 init.WSManager(wsManager);
