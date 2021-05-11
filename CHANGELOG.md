@@ -1,3 +1,10 @@
+## [1.1.16](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.15...v1.1.16) (2021-05-11)
+
+
+### Bug Fixes
+
+* Action permission based permissions ([a199238](https://github.com/CoCreate-app/CoCreateApi/commit/a199238572e558a81d2a34c3ddcd8cf90a911868))
+
 ## [1.1.15](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.14...v1.1.15) (2021-04-23)
 
 
