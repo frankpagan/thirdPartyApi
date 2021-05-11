@@ -48,5 +48,5 @@ CoCreate-CoCreateApi is maintained and funded by CoCreate. The names and logos f
 We encourage contribution to our libraries (you might even score some nifty swag), please see our [CONTRIBUTING](https://github.com/CoCreate-app/CoCreate-CoCreateApi/blob/master/CONTRIBUTING.md) guide for details.
 
 # License
-[The MIT License (MIT)](https://github.com/CoCreate-app/CoCreate-CoCreateApi/blob/master/LICENSE)
+[Server Side Public License (SSPL)](https://github.com/CoCreate-app/CoCreate-CoCreateApi/blob/master/LICENSE)
 

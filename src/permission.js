@@ -8,16 +8,34 @@ crud.setSocket(socket);
 class ApiPermission extends CoCreatePermission {
   constructor() {
     super();
+    this.initEvent()
+  }
+  
+  initEvent() {
+    const self = this;
+    console.log('yyyyy')
+    crud.listen('updateDocument', (data) => self.refreshPermission(data))
+    crud.listen('createDocument', (data) => self.refreshPermission(data))
+    crud.listen('deleteDocument', (data) => self.refreshPermission(data))
+  }
+  
+  async refreshPermission(data) {
+    const {collection, document_id, organization_id, data : permissionData } = data
+    if (collection === 'permissions' && this.hasPermission(permissionData.key)) {
+      let new_permission = await this.getPermissionObject(permissionData.key, organization_id)
+      this.setPermissionObject(permissionData.key, new_permission)
+    }
   }
   
   getParameters(action, data) {
-    const { data: {apiKey, organization_id, collection, securityKey}, type } = data;
+    const { data: {apiKey, organization_id, collection, securityKey, doucment_id}, type } = data;
     return {
 			apikey: apiKey,
 			organization_id,
-			key: 'plugins',
-			key_value: action,
-			type: type
+			collection: null,
+			plugin: action,
+			type,
+			doucment_id
     }
   }
   
@@ -43,7 +61,7 @@ class ApiPermission extends CoCreatePermission {
         collection: "permissions",
         operator: {
           filters: [{
-            name: 'apikey',
+            name: 'key',
             operator: "$eq",
             value: [key]
           }],
@@ -58,8 +76,7 @@ class ApiPermission extends CoCreatePermission {
       
       
       let response = await crud.listenAsync(eventPermission);
-      console.log('--------- permission loaded ------- ')
-
+      // console.log(response.data[0])
       return (response && response.data != null) ?  response.data[0] : null;
     } catch (err) {
       console.log(err)

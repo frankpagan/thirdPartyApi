@@ -56,5 +56,10 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-session": "^1.17.1"
+  },
+  "devDependencies": {
+    "chrome-launcher": "^0.13.4",
+    "fs": "^0.0.1-security",
+    "lighthouse": "^7.4.0"
   }
 }
