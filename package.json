@@ -29,6 +29,9 @@
     "type": "git",
     "url": "git+https://github.com/CoCreate-app/CoCreateApi.git"
   },
+    "publishConfig": {
+    "access": "public"
+  },
   "author": "CoCreate LLC",
   "license": "SSPL-1.0",
   "bugs": {
