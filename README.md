@@ -48,3 +48,4 @@ We encourage contribution to our libraries (you might even score some nifty swag
 
 # License
 [Server Side Public License (SSPL)](https://github.com/CoCreate-app/CoCreate-CoCreateApi/blob/master/LICENSE)
+
