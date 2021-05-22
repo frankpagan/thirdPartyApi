@@ -1,3 +1,10 @@
+## [1.1.19](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.18...v1.1.19) (2021-05-22)
+
+
+### Bug Fixes
+
+* ReadME ([35dce5c](https://github.com/CoCreate-app/CoCreateApi/commit/35dce5c30ee5be6906632effdc7e447884ea4558))
+
 ## [1.1.18](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.17...v1.1.18) (2021-05-22)
 
 
