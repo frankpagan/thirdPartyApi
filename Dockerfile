@@ -1,11 +1,10 @@
-FROM node:12-alpine
+FROM mhart/alpine-node:12
+
+ENV NODE_ENV=production
 
 WORKDIR /usr/src/app
 
 COPY . /usr/src/app/
+RUN npm install
 
-ENV NODE_ENV=production
-RUN npm ci --only=production
-
-ENTRYPOINT [ "npm" ]
-CMD [ "start" ]
+CMD [ "npm", "start" ]
