@@ -62,8 +62,5 @@
     "nodemon": "^2.0.7"
   },
   "devDependencies": {
-    "chrome-launcher": "^0.14.0",
-    "fs": "^0.0.1-security",
-    "lighthouse": "^7.5.0"
   }
 }
