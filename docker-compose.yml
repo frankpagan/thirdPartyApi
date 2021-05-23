@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - '.:/app'
+      - '/app/node_modules'
+    ports:
+      - 3002:3002
+    environment:
+      - CHOKIDAR_USEPOLLING=true

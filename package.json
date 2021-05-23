@@ -1,6 +1,6 @@
 {
   "name": "@cocreate/cocreateapi",
-  "version": "1.1.21",
+  "version": "1.1.16",
   "description": "A simple cocreateapi component in vanilla javascript. Easily configured using HTML5 data-attributes and/or JavaScript API.",
   "keywords": [
     "cocreateapi",
@@ -21,6 +21,7 @@
     "javascript-framework"
   ],
   "scripts": {
+    "test_start": "PORT=3002 node src/test_start.js",
     "start": "PORT=3002 node src/server.js",
     "dev": "PORT=3002 nodemon src/server.js",
     "docs": "node ./node_modules/@cocreate/docs/src/index.js"
@@ -29,9 +30,6 @@
     "type": "git",
     "url": "git+https://github.com/CoCreate-app/CoCreateApi.git"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "author": "CoCreate LLC",
   "license": "SSPL-1.0",
   "bugs": {
@@ -39,30 +37,33 @@
   },
   "homepage": "https://cocreate.app/docs/CoCreateApi",
   "dependencies": {
-    "@cocreate/crud-client": "^1.0.3",
-    "@cocreate/docs": "^1.0.3",
-    "@cocreate/domain": "^1.0.2",
-    "@cocreate/facebook": "^1.0.4",
-    "@cocreate/google-auth": "^1.0.2",
+    "@cocreate/api": "^1.0.12",
+    "@cocreate/crud-client": "^1.0.10",
+    "@cocreate/docs": "^1.1.8",
+    "@cocreate/domain": "^1.0.7",
+    "@cocreate/facebook": "^1.0.8",
+    "@cocreate/google-auth": "^1.0.8",
     "@cocreate/instagram": "^1.0.0",
-    "@cocreate/lighthouse": "^1.0.2",
-    "@cocreate/linkedin": "^1.0.3",
-    "@cocreate/pinterest": "^1.0.2",
+    "@cocreate/lighthouse": "^1.0.8",
+    "@cocreate/linkedin": "^1.0.8",
+    "@cocreate/permissions": "^1.1.1",
+    "@cocreate/pinterest": "^1.0.8",
     "@cocreate/plaid": "^1.0.0",
-    "@cocreate/sendgrid": "^1.0.7",
-    "@cocreate/shipengine": "^1.0.5",
-    "@cocreate/socket-client": "^1.0.3",
-    "@cocreate/socket-server": "^1.0.0",
-    "@cocreate/stripe": "^1.1.1",
-    "@cocreate/twilio": "^1.0.7",
-    "@cocreate/twitter": "^1.1.2",
+    "@cocreate/sendgrid": "^1.0.12",
+    "@cocreate/shipengine": "^1.0.12",
+    "@cocreate/socket-client": "^1.0.12",
+    "@cocreate/socket-server": "^1.1.0",
+    "@cocreate/stripe": "^1.1.5",
+    "@cocreate/twilio": "^1.0.11",
+    "@cocreate/twitter": "^1.1.6",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "express-session": "^1.17.1"
+    "express-session": "^1.17.1",
+    "nodemon": "^2.0.7"
   },
   "devDependencies": {
-    "chrome-launcher": "^0.13.4",
+    "chrome-launcher": "^0.14.0",
     "fs": "^0.0.1-security",
-    "lighthouse": "^7.4.0"
+    "lighthouse": "^7.5.0"
   }
 }
