@@ -1,3 +1,12 @@
+## [1.1.23](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.22...v1.1.23) (2021-05-23)
+
+
+### Bug Fixes
+
+* pacjkage.json conflict ([76f5223](https://github.com/CoCreate-app/CoCreateApi/commit/76f522379c12ef4a7bfbfa2815261f9ac31282e9))
+* package.json ([f1e55d0](https://github.com/CoCreate-app/CoCreateApi/commit/f1e55d079025979e8f1ae6ff3b9b2b8efa171eee))
+* package.json ([1e9c749](https://github.com/CoCreate-app/CoCreateApi/commit/1e9c7490e9e2b2a2004908374dcf4239242e7153))
+
 ## [1.1.22](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.21...v1.1.22) (2021-05-23)
 
 
