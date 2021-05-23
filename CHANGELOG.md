@@ -1,3 +1,11 @@
+## [1.1.22](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.21...v1.1.22) (2021-05-23)
+
+
+### Bug Fixes
+
+* feat CoCreateShipengine ([9dc769c](https://github.com/CoCreate-app/CoCreateApi/commit/9dc769c3ae99c03a0230d91a3fb55846452dce4f))
+* feat CoCreateShipengine ([907c757](https://github.com/CoCreate-app/CoCreateApi/commit/907c757096274aed5ab5844dcc07eefd7a969665))
+
 ## [1.1.21](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.20...v1.1.21) (2021-05-22)
 
 
