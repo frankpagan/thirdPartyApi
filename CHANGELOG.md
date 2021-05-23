@@ -1,6 +1,5 @@
 ## [1.1.20](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.19...v1.1.20) (2021-05-22)
 
-
 ### Bug Fixes
 
 * deployment issue with plaid ([519aa3b](https://github.com/CoCreate-app/CoCreateApi/commit/519aa3b7e399321369c903e652e661a4bd5e2c1f))
