@@ -1,3 +1,10 @@
+## [1.1.21](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.20...v1.1.21) (2021-05-22)
+
+
+### Bug Fixes
+
+* deployment issue with shipengine ([79ccb3f](https://github.com/CoCreate-app/CoCreateApi/commit/79ccb3f9f55ca9677a42f68e32f58b5c318cb01e))
+
 ## [1.1.20](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.19...v1.1.20) (2021-05-22)
 
 ### Bug Fixes
