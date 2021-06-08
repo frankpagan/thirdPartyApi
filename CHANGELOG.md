@@ -1,3 +1,10 @@
+## [1.1.24](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.23...v1.1.24) (2021-05-23)
+
+
+### Bug Fixes
+
+* clean package.json ([2121fcb](https://github.com/CoCreate-app/CoCreateApi/commit/2121fcb50ad991c3ea2087d468a65a1910bb0409))
+
 ## [1.1.23](https://github.com/CoCreate-app/CoCreateApi/compare/v1.1.22...v1.1.23) (2021-05-23)
 
 
